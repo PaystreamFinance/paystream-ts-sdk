@@ -1,0 +1,43 @@
+{
+  "name": "@paystream-finance/paystream-v1",
+  "version": "0.0.1",
+  "description": "Paystream v1 TS package",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "author": "me-imfhd",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "build:package": "yarn clean && rollup -c",
+    "clean": "rm -rf ./dist",
+    "prepublishOnly": "node ./scripts/preparePkgForRegistry.js && rollup -c",
+    "postpublish": "node ./scripts/rollbackPkg.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@coral-xyz/anchor": "^0.31.0",
+    "@coral-xyz/spl-token": "^0.31.0",
+    "@drift-labs/sdk": "2.118.0-beta.3",
+    "@metaplex-foundation/beet": "^0.7.1",
+    "@metaplex-foundation/beet-solana": "^0.4.1",
+    "@solana/spl-token": "^0.4.0",
+    "bs58": "^5.0.0",
+    "buffer-layout": "^1.2.2",
+    "lodash.chunk": "^4.2.0"
+  },
+  "devDependencies": {
+    "@types/bs58": "^4.0.4",
+    "@types/lodash.chunk": "^4.2.9",
+    "rollup": "^3.29.0",
+    "rollup-plugin-typescript2": "^0.35.0",
+    "typescript": "^5.2.2"
+  }
+}

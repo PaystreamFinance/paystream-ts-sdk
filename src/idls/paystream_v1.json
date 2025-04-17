@@ -1,0 +1,2551 @@
+{
+  "address": "BEs6Lh6NbDVtxt3FPKVkLN9fz22Byk6EvEp4GRUW7mqm",
+  "metadata": {
+    "name": "paystream_v1",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "allocate_seat",
+      "discriminator": [
+        168,
+        26,
+        240,
+        212,
+        37,
+        206,
+        127,
+        195
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "docs": [
+            "The admin with authority to approve seats"
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "market_header",
+          "writable": true
+        },
+        {
+          "name": "trader"
+        },
+        {
+          "name": "seat",
+          "docs": [
+            "The seat account to be approved"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  101,
+                  97,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market_header"
+              },
+              {
+                "kind": "account",
+                "path": "trader"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "approve_seat",
+      "docs": [
+        "Approves a trader's request for a seat in the market.",
+        "",
+        "Only market administrators can approve seat requests.",
+        "Once approved, the trader can deposit funds and participate in the market."
+      ],
+      "discriminator": [
+        54,
+        208,
+        161,
+        60,
+        191,
+        220,
+        112,
+        139
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "docs": [
+            "The admin with authority to approve seats"
+          ],
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "market_header",
+          "writable": true
+        },
+        {
+          "name": "seat",
+          "docs": [
+            "The seat account to be approved"
+          ],
+          "writable": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "borrow",
+      "docs": [
+        "Allows a trader to borrow assets from the market.",
+        "",
+        "The trader must have sufficient collateral in their deposit.",
+        "Borrowed amounts are subject to the market's loan-to-value ratio."
+      ],
+      "discriminator": [
+        228,
+        253,
+        131,
+        202,
+        207,
+        116,
+        89,
+        18
+      ],
+      "accounts": [
+        {
+          "name": "trader",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "seat"
+          ]
+        },
+        {
+          "name": "market_header",
+          "writable": true
+        },
+        {
+          "name": "market",
+          "docs": [
+            "The market receiving the lent assets",
+            "Verify market is active and accepting Borrows"
+          ],
+          "writable": true,
+          "relations": [
+            "market_header",
+            "seat"
+          ]
+        },
+        {
+          "name": "collateral_market",
+          "docs": [
+            "The collateral market account"
+          ],
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "mint",
+          "docs": [
+            "The mint of the asset being Borrowed"
+          ],
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "collateral_mint",
+          "docs": [
+            "The collateral mint of the asset being Borrowed"
+          ],
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "vault",
+          "docs": [
+            "The market vault where assets will be stored"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          },
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "collateral_vault",
+          "docs": [
+            "The collateral market vault where assets will be stored"
+          ],
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "collateral_market"
+              },
+              {
+                "kind": "account",
+                "path": "collateral_mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "trader_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "trader"
+              },
+              {
+                "kind": "account",
+                "path": "token_program"
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "seat",
+          "docs": [
+            "The trader's seat in the market"
+          ],
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "collateral_token_program",
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "protocol_trader_pda",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  116,
+                  111,
+                  99,
+                  111,
+                  108,
+                  95,
+                  116,
+                  114,
+                  97,
+                  100,
+                  101,
+                  114,
+                  95,
+                  112,
+                  100,
+                  97
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "optimizer_program"
+            }
+          }
+        },
+        {
+          "name": "optimizer_state",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  111,
+                  112,
+                  116,
+                  105,
+                  109,
+                  105,
+                  122,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "sys_ix"
+        },
+        {
+          "name": "optimizer_program",
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "protocol_program"
+        },
+        {
+          "name": "protocol_vault"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "deposit",
+      "docs": [
+        "Allows a trader to deposit assets to the market.",
+        "",
+        "The trader must have an approved seat.",
+        "The deposited assets can be used either as collateral for borrowing",
+        "or for lending in the peer-to-peer market."
+      ],
+      "discriminator": [
+        242,
+        35,
+        198,
+        137,
+        82,
+        225,
+        242,
+        182
+      ],
+      "accounts": [
+        {
+          "name": "trader",
+          "docs": [
+            "The trader lending assets"
+          ],
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "seat"
+          ]
+        },
+        {
+          "name": "market_header",
+          "docs": [
+            "The market header account that will be initialized and stores market metadata"
+          ],
+          "writable": true
+        },
+        {
+          "name": "market",
+          "docs": [
+            "The market receiving the lent assets",
+            "Verify market is active and accepting deposits"
+          ],
+          "writable": true,
+          "relations": [
+            "market_header",
+            "seat"
+          ]
+        },
+        {
+          "name": "mint",
+          "docs": [
+            "The mint of the asset being deposited"
+          ],
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "vault",
+          "docs": [
+            "The market vault where assets will be stored"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          },
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "trader_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "trader"
+              },
+              {
+                "kind": "account",
+                "path": "token_program"
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "protocol_trader_pda",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  116,
+                  111,
+                  99,
+                  111,
+                  108,
+                  95,
+                  116,
+                  114,
+                  97,
+                  100,
+                  101,
+                  114,
+                  95,
+                  112,
+                  100,
+                  97
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "optimizer_program"
+            }
+          }
+        },
+        {
+          "name": "optimizer_state",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  111,
+                  112,
+                  116,
+                  105,
+                  109,
+                  105,
+                  122,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "sys_ix"
+        },
+        {
+          "name": "optimizer_program",
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "protocol_program"
+        },
+        {
+          "name": "protocol_vault"
+        },
+        {
+          "name": "seat",
+          "docs": [
+            "The trader's seat in the market"
+          ],
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "initialize_market",
+      "docs": [
+        "Initializes a new lending market.",
+        "",
+        "This function creates a new market account and associated vault for storing tokens.",
+        "The market will track lending positions and collateral positions separately."
+      ],
+      "discriminator": [
+        35,
+        35,
+        189,
+        193,
+        155,
+        48,
+        170,
+        203
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "docs": [
+            "The authority that creates and manages the market"
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "market_header",
+          "docs": [
+            "The market header account that will be initialized and stores market metadata"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  95,
+                  104,
+                  101,
+                  97,
+                  100,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "market",
+          "docs": [
+            "The market account that will be initialized"
+          ]
+        },
+        {
+          "name": "collateral_market",
+          "docs": [
+            "The collateral market account that will be initialized"
+          ]
+        },
+        {
+          "name": "market_vault",
+          "docs": [
+            "The token vault associated with the market for storing assets",
+            "Should be a PDA derived from the market and token mint"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "mint",
+          "docs": [
+            "The token mint that this market will use"
+          ]
+        },
+        {
+          "name": "collateral_mint",
+          "docs": [
+            "The collateral token mint that this market will use"
+          ]
+        },
+        {
+          "name": "collateral_token_program",
+          "docs": [
+            "The collateral token program that this market will use"
+          ]
+        },
+        {
+          "name": "token_program",
+          "docs": [
+            "The token program interface"
+          ]
+        },
+        {
+          "name": "system_program",
+          "docs": [
+            "The system program"
+          ],
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "optimizer_program",
+          "docs": [
+            "The optimizer program"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "fee_recipient",
+          "type": "pubkey"
+        },
+        {
+          "name": "market_id",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "lend",
+      "docs": [
+        "Allows a trader to lend assets in the peer-to-peer market.",
+        "",
+        "The trader must have previously deposited funds.",
+        "Only non-collateral funds can be used for peer-to-peer lending."
+      ],
+      "discriminator": [
+        89,
+        34,
+        75,
+        168,
+        122,
+        47,
+        185,
+        45
+      ],
+      "accounts": [
+        {
+          "name": "trader",
+          "docs": [
+            "The trader lending assets"
+          ],
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "seat"
+          ]
+        },
+        {
+          "name": "market_header",
+          "docs": [
+            "The market header account that will be initialized and stores market metadata"
+          ],
+          "writable": true
+        },
+        {
+          "name": "market",
+          "docs": [
+            "The market receiving the lent assets",
+            "Verify market is active and accepting Lends"
+          ],
+          "writable": true,
+          "relations": [
+            "market_header",
+            "seat"
+          ]
+        },
+        {
+          "name": "mint",
+          "docs": [
+            "The mint of the asset being Lended"
+          ],
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "vault",
+          "docs": [
+            "The market vault where assets will be stored"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          },
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "trader_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "trader"
+              },
+              {
+                "kind": "account",
+                "path": "token_program"
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "seat",
+          "docs": [
+            "The trader's seat in the market"
+          ],
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "protocol_trader_pda",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  116,
+                  111,
+                  99,
+                  111,
+                  108,
+                  95,
+                  116,
+                  114,
+                  97,
+                  100,
+                  101,
+                  114,
+                  95,
+                  112,
+                  100,
+                  97
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "optimizer_program"
+            }
+          }
+        },
+        {
+          "name": "optimizer_state",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  111,
+                  112,
+                  116,
+                  105,
+                  109,
+                  105,
+                  122,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "sys_ix"
+        },
+        {
+          "name": "optimizer_program",
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "protocol_program"
+        },
+        {
+          "name": "protocol_vault"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "mark_as_collateral",
+      "discriminator": [
+        150,
+        79,
+        29,
+        32,
+        159,
+        55,
+        26,
+        178
+      ],
+      "accounts": [
+        {
+          "name": "trader",
+          "docs": [
+            "The trader lending assets"
+          ],
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "seat"
+          ]
+        },
+        {
+          "name": "market_header",
+          "docs": [
+            "The market header account that will be initialized and stores market metadata"
+          ],
+          "writable": true
+        },
+        {
+          "name": "market",
+          "docs": [
+            "The market receiving the lent assets",
+            "Verify market is active and accepting deposits"
+          ],
+          "writable": true,
+          "relations": [
+            "market_header",
+            "seat"
+          ]
+        },
+        {
+          "name": "mint",
+          "docs": [
+            "The mint of the asset being deposited"
+          ],
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "vault",
+          "docs": [
+            "The market vault where assets will be stored"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          },
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "trader_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "trader"
+              },
+              {
+                "kind": "account",
+                "path": "token_program"
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "protocol_trader_pda",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  116,
+                  111,
+                  99,
+                  111,
+                  108,
+                  95,
+                  116,
+                  114,
+                  97,
+                  100,
+                  101,
+                  114,
+                  95,
+                  112,
+                  100,
+                  97
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "optimizer_program"
+            }
+          }
+        },
+        {
+          "name": "optimizer_state",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  111,
+                  112,
+                  116,
+                  105,
+                  109,
+                  105,
+                  122,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "sys_ix"
+        },
+        {
+          "name": "optimizer_program",
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "protocol_program"
+        },
+        {
+          "name": "protocol_vault"
+        },
+        {
+          "name": "seat",
+          "docs": [
+            "The trader's seat in the market"
+          ],
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "repay",
+      "docs": [
+        "Allows a trader to repay borrowed assets to the market.",
+        "",
+        "Repayments cover both principal and accrued interest.",
+        "Excess repayment amounts are ignored."
+      ],
+      "discriminator": [
+        234,
+        103,
+        67,
+        82,
+        208,
+        234,
+        219,
+        166
+      ],
+      "accounts": [
+        {
+          "name": "trader",
+          "docs": [
+            "The trader lending assets"
+          ],
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "seat"
+          ]
+        },
+        {
+          "name": "market_header",
+          "docs": [
+            "The market header account that will be initialized and stores market metadata"
+          ],
+          "writable": true
+        },
+        {
+          "name": "market",
+          "docs": [
+            "The market receiving the lent assets",
+            "Verify market is active and accepting Repays"
+          ],
+          "writable": true,
+          "relations": [
+            "market_header",
+            "seat"
+          ]
+        },
+        {
+          "name": "collateral_market",
+          "docs": [
+            "The collateral market receiving the lent assets",
+            "Verify market is active and accepting Repays"
+          ],
+          "writable": true,
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "mint",
+          "docs": [
+            "The mint of the asset being Repayed"
+          ],
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "collateral_mint",
+          "docs": [
+            "The collateral mint of the asset being Repayed"
+          ],
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "vault",
+          "docs": [
+            "The market vault where assets will be stored"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          },
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "trader_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "trader"
+              },
+              {
+                "kind": "account",
+                "path": "token_program"
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "seat",
+          "docs": [
+            "The trader's seat in the market"
+          ],
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "protocol_trader_pda",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  116,
+                  111,
+                  99,
+                  111,
+                  108,
+                  95,
+                  116,
+                  114,
+                  97,
+                  100,
+                  101,
+                  114,
+                  95,
+                  112,
+                  100,
+                  97
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "optimizer_program"
+            }
+          }
+        },
+        {
+          "name": "optimizer_state",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  111,
+                  112,
+                  116,
+                  105,
+                  109,
+                  105,
+                  122,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "sys_ix"
+        },
+        {
+          "name": "optimizer_program",
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "protocol_program"
+        },
+        {
+          "name": "protocol_vault"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "request_seat",
+      "docs": [
+        "Allows a trader to request a seat in the market.",
+        "",
+        "A seat is required to participate in lending and borrowing activities.",
+        "The request must be approved by a market administrator before the trader can participate."
+      ],
+      "discriminator": [
+        45,
+        147,
+        28,
+        81,
+        244,
+        235,
+        148,
+        143
+      ],
+      "accounts": [
+        {
+          "name": "trader",
+          "docs": [
+            "The trader requesting a seat"
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "market_header",
+          "docs": [
+            "The market header"
+          ]
+        },
+        {
+          "name": "seat",
+          "docs": [
+            "The seat account to be created"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  101,
+                  97,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market_header"
+              },
+              {
+                "kind": "account",
+                "path": "trader"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "docs": [
+            "The system program"
+          ],
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "toggle_p2p_lending",
+      "discriminator": [
+        82,
+        246,
+        226,
+        131,
+        141,
+        251,
+        33,
+        91
+      ],
+      "accounts": [
+        {
+          "name": "trader",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "seat"
+          ]
+        },
+        {
+          "name": "market_header",
+          "writable": true
+        },
+        {
+          "name": "market",
+          "writable": true,
+          "relations": [
+            "market_header",
+            "seat"
+          ]
+        },
+        {
+          "name": "seat",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "enable_p2p_lending",
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "name": "update_market_authority",
+      "discriminator": [
+        117,
+        110,
+        157,
+        95,
+        174,
+        56,
+        208,
+        146
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "docs": [
+            "The authority that creates and manages the market"
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "market_header",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "new_authority",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "update_market_header",
+      "discriminator": [
+        56,
+        209,
+        36,
+        255,
+        215,
+        166,
+        203,
+        132
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "docs": [
+            "The authority that creates and manages the market"
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "market_header",
+          "writable": true
+        },
+        {
+          "name": "optimizer_program",
+          "docs": [
+            "The optimizer program"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "fee_recipient",
+          "type": "pubkey"
+        },
+        {
+          "name": "enable_p2p_lending",
+          "type": "bool"
+        },
+        {
+          "name": "update_market_status",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "withdraw",
+      "docs": [
+        "Allows a trader to withdraw their deposited assets from the market.",
+        "",
+        "The trader can only withdraw funds that are not being used as collateral",
+        "or actively lent in peer-to-peer matches."
+      ],
+      "discriminator": [
+        183,
+        18,
+        70,
+        156,
+        148,
+        109,
+        161,
+        34
+      ],
+      "accounts": [
+        {
+          "name": "trader",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "seat"
+          ]
+        },
+        {
+          "name": "market_header",
+          "writable": true
+        },
+        {
+          "name": "market",
+          "docs": [
+            "The market receiving the lent assets",
+            "Verify market is active and accepting Withdraws"
+          ],
+          "writable": true,
+          "relations": [
+            "market_header",
+            "seat"
+          ]
+        },
+        {
+          "name": "collateral_market",
+          "docs": [
+            "The collateral market account"
+          ],
+          "writable": true,
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "mint",
+          "docs": [
+            "The mint of the asset being Withdrawed"
+          ],
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "collateral_mint",
+          "docs": [
+            "The collateral mint of the asset being Withdrawed"
+          ],
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "vault",
+          "docs": [
+            "The market vault where assets will be stored"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          },
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "collateral_vault",
+          "docs": [
+            "The collateral market vault where assets will be stored"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "collateral_market"
+              },
+              {
+                "kind": "account",
+                "path": "collateral_mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "trader_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "trader"
+              },
+              {
+                "kind": "account",
+                "path": "token_program"
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "seat",
+          "docs": [
+            "The trader's seat in the market"
+          ],
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "collateral_token_program",
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "protocol_trader_pda",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  116,
+                  111,
+                  99,
+                  111,
+                  108,
+                  95,
+                  116,
+                  114,
+                  97,
+                  100,
+                  101,
+                  114,
+                  95,
+                  112,
+                  100,
+                  97
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "optimizer_program"
+            }
+          }
+        },
+        {
+          "name": "optimizer_state",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  111,
+                  112,
+                  116,
+                  105,
+                  109,
+                  105,
+                  122,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "sys_ix"
+        },
+        {
+          "name": "optimizer_program",
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "protocol_program"
+        },
+        {
+          "name": "protocol_vault"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "MarketHeader",
+      "discriminator": [
+        56,
+        105,
+        191,
+        242,
+        226,
+        243,
+        198,
+        164
+      ]
+    },
+    {
+      "name": "Seat",
+      "discriminator": [
+        90,
+        228,
+        22,
+        90,
+        162,
+        86,
+        173,
+        26
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "TokenTransferFailed",
+      "msg": "Token transfer failed"
+    },
+    {
+      "code": 6001,
+      "name": "InvalidTokenAccount",
+      "msg": "Invalid token account"
+    },
+    {
+      "code": 6002,
+      "name": "InsufficientFunds",
+      "msg": "Insufficient funds"
+    },
+    {
+      "code": 6003,
+      "name": "InvalidAmount",
+      "msg": "Amount must be greater than zero"
+    },
+    {
+      "code": 6004,
+      "name": "InvalidAuthority",
+      "msg": "Invalid authority, only admin can make this call"
+    },
+    {
+      "code": 6005,
+      "name": "FailedToLoadMarketFromAccount",
+      "msg": "Failed to load market from account"
+    },
+    {
+      "code": 6006,
+      "name": "InvalidMarketParameters",
+      "msg": "Invalid market parameters"
+    },
+    {
+      "code": 6007,
+      "name": "MarketAlreadyInitialized",
+      "msg": "Market is already initialized"
+    },
+    {
+      "code": 6008,
+      "name": "InvalidSeat",
+      "msg": "Invalid seat"
+    },
+    {
+      "code": 6009,
+      "name": "MarketNotActive",
+      "msg": "Market is not active"
+    },
+    {
+      "code": 6010,
+      "name": "InvalidMarketVault",
+      "msg": "Invalid market vault"
+    },
+    {
+      "code": 6011,
+      "name": "OrderNotFound",
+      "msg": "Order not found"
+    },
+    {
+      "code": 6012,
+      "name": "OrderAlreadyMatched",
+      "msg": "Order already matched"
+    },
+    {
+      "code": 6013,
+      "name": "MathOverflow",
+      "msg": "Math overflow"
+    },
+    {
+      "code": 6014,
+      "name": "InvalidTrader",
+      "msg": "Invalid trader"
+    },
+    {
+      "code": 6015,
+      "name": "InvalidOrderAmount",
+      "msg": "Invalid order amount"
+    },
+    {
+      "code": 6016,
+      "name": "TraderCapacityReached",
+      "msg": "Trader capacity reached"
+    },
+    {
+      "code": 6017,
+      "name": "TraderNotFound",
+      "msg": "Trader not found"
+    },
+    {
+      "code": 6018,
+      "name": "InsufficientCollateral",
+      "msg": "Insufficient collateral"
+    },
+    {
+      "code": 6019,
+      "name": "P2PMatchingAlreadyEnabled",
+      "msg": "P2P matching already enabled"
+    },
+    {
+      "code": 6020,
+      "name": "P2PMatchingAlreadyDisabled",
+      "msg": "P2P matching already disabled"
+    },
+    {
+      "code": 6021,
+      "name": "P2PDisabled",
+      "msg": "P2P disabled"
+    },
+    {
+      "code": 6022,
+      "name": "P2pDisabledByTrader",
+      "msg": "P2P disabled by trader"
+    },
+    {
+      "code": 6023,
+      "name": "P2pEnabledByTrader",
+      "msg": "P2P enabled by trader"
+    },
+    {
+      "code": 6024,
+      "name": "InvalidCollateralMint",
+      "msg": "Invalid collateral mint"
+    },
+    {
+      "code": 6025,
+      "name": "IdenticalMarketAndCollateralMarket",
+      "msg": "Identical market and collateral market, both cannot be the same"
+    },
+    {
+      "code": 6026,
+      "name": "InvalidBorrower",
+      "msg": "Invalid borrower"
+    },
+    {
+      "code": 6027,
+      "name": "SeatAlreadyApproved",
+      "msg": "Seat already approved"
+    },
+    {
+      "code": 6028,
+      "name": "AlreadyBorrowingCannotLend",
+      "msg": "Already borrowing can't lend"
+    },
+    {
+      "code": 6029,
+      "name": "AlreadyLendingCannotBorrow",
+      "msg": "Already lending can't borrow"
+    },
+    {
+      "code": 6030,
+      "name": "RepaymentFailed",
+      "msg": "Repayment failed, Amount resolved to zero as repayment amount"
+    },
+    {
+      "code": 6031,
+      "name": "CastingFailure",
+      "msg": "Casting error"
+    },
+    {
+      "code": 6032,
+      "name": "MathError",
+      "msg": "Math error"
+    },
+    {
+      "code": 6033,
+      "name": "InvalidOptimizerProgram",
+      "msg": "Invalid optimizer program"
+    },
+    {
+      "code": 6034,
+      "name": "InvalidRepaymentAmount",
+      "msg": "Invalid repayment amount"
+    }
+  ],
+  "types": [
+    {
+      "name": "MarketHeader",
+      "repr": {
+        "kind": "c"
+      },
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market_id",
+            "type": "u64"
+          },
+          {
+            "name": "market",
+            "type": "pubkey"
+          },
+          {
+            "name": "collateral_market",
+            "type": "pubkey"
+          },
+          {
+            "name": "mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "collateral_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "token_program",
+            "type": "pubkey"
+          },
+          {
+            "name": "collateral_token_program",
+            "type": "pubkey"
+          },
+          {
+            "name": "p2p_enabled",
+            "type": "bool"
+          },
+          {
+            "name": "status",
+            "type": "u64"
+          },
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "vault",
+            "type": "pubkey"
+          },
+          {
+            "name": "vault_bump",
+            "type": "u8"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "fee_recipient",
+            "type": "pubkey"
+          },
+          {
+            "name": "optimizer_program",
+            "type": "pubkey"
+          },
+          {
+            "name": "_padding",
+            "type": {
+              "array": [
+                "u8",
+                64
+              ]
+            }
+          },
+          {
+            "name": "_padding2",
+            "type": {
+              "array": [
+                "u8",
+                64
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Seat",
+      "repr": {
+        "kind": "c"
+      },
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "type": "pubkey"
+          },
+          {
+            "name": "trader",
+            "type": "pubkey"
+          },
+          {
+            "name": "approval_state",
+            "type": "u64"
+          }
+        ]
+      }
+    }
+  ],
+  "constants": [
+    {
+      "name": "LTV_RATIO",
+      "type": "u64",
+      "value": "8000"
+    },
+    {
+      "name": "MARKET_HEADER_SEED",
+      "type": "bytes",
+      "value": "[109, 97, 114, 107, 101, 116, 95, 104, 101, 97, 100, 101, 114]"
+    },
+    {
+      "name": "MARKET_VAULT_SEED",
+      "type": "bytes",
+      "value": "[109, 97, 114, 107, 101, 116, 95, 118, 97, 117, 108, 116]"
+    },
+    {
+      "name": "PRICE_PRECISION",
+      "type": "u64",
+      "value": "1000000000"
+    },
+    {
+      "name": "RATE_PRECISION",
+      "type": "u64",
+      "value": "10000"
+    },
+    {
+      "name": "SEAT_SEED",
+      "type": "bytes",
+      "value": "[115, 101, 97, 116]"
+    },
+    {
+      "name": "SEVEN_DAYS",
+      "type": "u64",
+      "value": "604800"
+    }
+  ]
+}

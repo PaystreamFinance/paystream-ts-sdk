@@ -1,0 +1,282 @@
+{
+  "address": "BcwrzHi4JyZ83g47onQThJweVGCTpP79rKbTUPcZss3i",
+  "metadata": {
+    "name": "drift_optimizer",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "deposit",
+      "discriminator": [242, 35, 198, 137, 82, 225, 242, 182],
+      "accounts": [
+        {
+          "name": "accounts",
+          "accounts": [
+            {
+              "name": "protocol_trader_pda"
+            },
+            {
+              "name": "paystream_vault"
+            },
+            {
+              "name": "protocol_vault"
+            },
+            {
+              "name": "mint"
+            },
+            {
+              "name": "sys_ix"
+            },
+            {
+              "name": "token_program"
+            },
+            {
+              "name": "protocol_program"
+            }
+          ]
+        },
+        {
+          "name": "state"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "get_apys",
+      "discriminator": [46, 166, 111, 74, 7, 34, 8, 154],
+      "accounts": [
+        {
+          "name": "state"
+        },
+        {
+          "name": "sys_ix"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "initialize",
+      "discriminator": [175, 175, 109, 31, 13, 152, 155, 237],
+      "accounts": [
+        {
+          "name": "caller",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "market"
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "protocol_trader_pda",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112, 114, 111, 116, 111, 99, 111, 108, 95, 116, 114, 97, 100,
+                  101, 114, 95, 112, 100, 97
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "state",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [111, 112, 116, 105, 109, 105, 122, 101, 114]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "protocol_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "drift_market_index",
+          "type": "u16"
+        }
+      ]
+    },
+    {
+      "name": "update_market_authority",
+      "discriminator": [117, 110, 157, 95, 174, 56, 208, 146],
+      "accounts": [
+        {
+          "name": "authority",
+          "docs": ["The authority that creates and manages the market"],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "state",
+          "writable": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "update_state",
+      "discriminator": [135, 112, 215, 75, 247, 185, 53, 176],
+      "accounts": [
+        {
+          "name": "authority",
+          "docs": ["The authority that creates and manages the market"],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "state",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "program_caller",
+          "type": "pubkey"
+        },
+        {
+          "name": "protocol_program",
+          "type": "pubkey"
+        },
+        {
+          "name": "mint",
+          "type": "pubkey"
+        },
+        {
+          "name": "market",
+          "type": "pubkey"
+        },
+        {
+          "name": "market_index",
+          "type": "u16"
+        }
+      ]
+    },
+    {
+      "name": "withdraw",
+      "discriminator": [183, 18, 70, 156, 148, 109, 161, 34],
+      "accounts": [
+        {
+          "name": "accounts",
+          "accounts": [
+            {
+              "name": "protocol_trader_pda"
+            },
+            {
+              "name": "paystream_vault"
+            },
+            {
+              "name": "protocol_vault"
+            },
+            {
+              "name": "mint"
+            },
+            {
+              "name": "sys_ix"
+            },
+            {
+              "name": "token_program"
+            },
+            {
+              "name": "protocol_program"
+            }
+          ]
+        },
+        {
+          "name": "state"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "DriftOptimizer",
+      "discriminator": [198, 176, 94, 58, 239, 121, 203, 45]
+    }
+  ],
+  "types": [
+    {
+      "name": "DriftOptimizer",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "program_caller",
+            "type": "pubkey"
+          },
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "protocol_program",
+            "type": "pubkey"
+          },
+          {
+            "name": "mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "market",
+            "type": "pubkey"
+          },
+          {
+            "name": "market_index",
+            "type": "u16"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    }
+  ]
+}
