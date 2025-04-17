@@ -1,6 +1,6 @@
 const typescript = require("rollup-plugin-typescript2");
 const pkg = require("./package.json");
-
+const json = require("@rollup/plugin-json");
 module.exports = {
   input: "src/index.ts",
   output: [
@@ -21,5 +21,6 @@ module.exports = {
     typescript({
       typescript: require("typescript"),
     }),
+    json(),
   ],
 };
