@@ -1,6 +1,6 @@
 import { AnchorProvider, BN, ProgramAccount, Wallet } from "@coral-xyz/anchor";
 import { Program, web3 } from "@coral-xyz/anchor";
-import PaystreamV1IDL from "./idls/paystream_v1.json";
+import PaystreamV1IDL from "../idls/paystream_v1.json";
 import type {
   Seat,
   MarketData,
@@ -17,7 +17,7 @@ import type {
   MarketHeader,
   MarketHeaderWithPubkey,
   Protocol,
-} from "./types";
+} from "../types";
 import {
   ParsedAccountData,
   PublicKey,
@@ -27,7 +27,7 @@ import {
   calculate_max_borrow_amount,
   calculate_required_collateral,
   PRICE_PRECISION,
-} from "./math";
+} from "../math";
 import {
   deserializeRedBlackTree,
   getNodeIndices,
@@ -36,9 +36,9 @@ import {
   matchStateBeet,
   publicKeyBeet,
   traderStateBeet,
-} from "./beet";
+} from "../beet";
 
-import { PaystreamV1 } from "./types/paystream_v1";
+import { PaystreamV1 } from "../types/paystream_v1";
 
 export class PaystreamV1Program {
   private program: Program<PaystreamV1>;
@@ -323,53 +323,6 @@ export class PaystreamV1Program {
     return new BN(value.amount);
   }
 
-  // Instruction methods
-  async initializeMarket(
-    mint: web3.PublicKey,
-    marketId: BN,
-    feeRecipient: web3.PublicKey,
-    tokenProgram: web3.PublicKey,
-    market: web3.Keypair,
-    collateralMarket: web3.PublicKey,
-    collateralTokenProgram: web3.PublicKey,
-    collateralMint: web3.PublicKey,
-    optimizerProgram: web3.PublicKey,
-    preInstructions?: TransactionInstruction[]
-  ): Promise<string> {
-    const tx = await this.program.methods
-      .initializeMarket(feeRecipient, marketId)
-      .accounts({
-        authority: this.wallet,
-        mint: mint,
-        tokenProgram: tokenProgram,
-        market: market.publicKey,
-        collateralMarket: collateralMarket,
-        collateralTokenProgram: collateralTokenProgram,
-        collateralMint: collateralMint,
-        optimizerProgram,
-      })
-      .preInstructions(preInstructions ?? [])
-      .signers([market])
-      .rpc();
-
-    return tx;
-  }
-
-  async updateMarketAuthority(
-    market: web3.PublicKey,
-    mint: web3.PublicKey,
-    newAuthority: web3.PublicKey
-  ): Promise<string> {
-    const marketHeaderPda = this.getMarketHeaderPda(market, mint);
-    const tx = await this.program.methods
-      .updateMarketAuthority(newAuthority)
-      .accounts({
-        marketHeader: marketHeaderPda,
-        authority: this.wallet,
-      })
-      .rpc();
-    return tx;
-  }
   async requestSeat(
     market: web3.PublicKey,
     mint: web3.PublicKey,
@@ -387,41 +340,6 @@ export class PaystreamV1Program {
     return tx;
   }
 
-  async approveSeat(
-    market: web3.PublicKey,
-    mint: web3.PublicKey,
-    trader: web3.PublicKey
-  ): Promise<string> {
-    let marketHeaderPda = this.getMarketHeaderPda(market, mint);
-    let seatPda = this.getSeatPda(marketHeaderPda, trader);
-    const tx = await this.program.methods
-      .approveSeat()
-      .accounts({
-        seat: seatPda,
-        marketHeader: marketHeaderPda,
-      })
-      .rpc();
-
-    return tx;
-  }
-
-  async allocateSeat(
-    market: web3.PublicKey,
-    mint: web3.PublicKey,
-    trader: web3.PublicKey
-  ): Promise<string> {
-    let marketHeaderPda = this.getMarketHeaderPda(market, mint);
-    const tx = await this.program.methods
-      .allocateSeat()
-      .accounts({
-        trader: trader,
-        marketHeader: marketHeaderPda,
-        authority: this.wallet,
-      })
-      .rpc();
-
-    return tx;
-  }
   getProtocolByName(protocol: Protocol): {
     programId: web3.PublicKey;
     vault: web3.PublicKey;

@@ -8,10 +8,10 @@ import {
 } from "@drift-labs/sdk/lib/node";
 import { BulkAccountLoader, DriftClient } from "@drift-labs/sdk/lib/node";
 import { PublicKey, SYSVAR_INSTRUCTIONS_PUBKEY } from "@solana/web3.js";
-import { DriftOptimizer } from "./types/drift_optimizer";
-import DRIFT_OPTIMIZER_IDL from "./idls/drift_optimizer.json";
-import { DriftOptimizerState } from "./types";
-import { PaystreamV1Program } from "./program";
+import { DriftOptimizer } from "../types/drift_optimizer";
+import DRIFT_OPTIMIZER_IDL from "../idls/drift_optimizer.json";
+import { DriftOptimizerState } from "../types";
+import { PaystreamV1Program } from "./paystream-client";
 import { IdlCoder } from "@coral-xyz/anchor/dist/cjs/coder/borsh/idl";
 import { decode } from "@coral-xyz/anchor/dist/cjs/utils/bytes/base64";
 
