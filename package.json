@@ -1,9 +1,9 @@
 {
-  "name": "@paystream-finance/sdk",
+  "name": "@paystreamfinance/sdk",
   "version": "0.0.1",
   "description": "Paystream v1 TS package",
-  "main": "dist/index.js",
-  "module": "dist/index.es.js",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
   "files": [
     "dist"
   ],
