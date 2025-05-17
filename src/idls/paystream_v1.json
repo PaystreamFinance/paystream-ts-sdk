@@ -1,5 +1,5 @@
 {
-  "address": "BEs6Lh6NbDVtxt3FPKVkLN9fz22Byk6EvEp4GRUW7mqm",
+  "address": "f9Gfo7RHWxGwPZN6EVDHWydyiyQUt4NA9JaF7cSWwcU",
   "metadata": {
     "name": "paystream_v1",
     "version": "0.1.0",
@@ -143,6 +143,13 @@
         },
         {
           "name": "market_header",
+          "writable": true
+        },
+        {
+          "name": "collateral_market_header",
+          "docs": [
+            "The collateral market header account"
+          ],
           "writable": true
         },
         {
@@ -339,31 +346,96 @@
           "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
         },
         {
-          "name": "protocol_trader_pda",
+          "name": "paystream_vault_authority",
           "pda": {
             "seeds": [
               {
                 "kind": "const",
                 "value": [
                   112,
-                  114,
-                  111,
-                  116,
-                  111,
-                  99,
-                  111,
-                  108,
-                  95,
-                  116,
-                  114,
                   97,
-                  100,
+                  121,
+                  115,
+                  116,
+                  114,
+                  101,
+                  97,
+                  109,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "optimizer_state",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  111,
+                  112,
+                  116,
+                  105,
+                  109,
+                  105,
+                  122,
                   101,
                   114,
                   95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "optimizer_program"
+            }
+          }
+        },
+        {
+          "name": "market_optimizer_state",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  95,
+                  111,
                   112,
-                  100,
-                  97
+                  116,
+                  105,
+                  109,
+                  105,
+                  122,
+                  101,
+                  114
                 ]
               },
               {
@@ -382,36 +454,20 @@
           }
         },
         {
-          "name": "optimizer_state",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  111,
-                  112,
-                  116,
-                  105,
-                  109,
-                  105,
-                  122,
-                  101,
-                  114
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "mint"
-              },
-              {
-                "kind": "account",
-                "path": "market"
-              }
-            ]
-          }
+          "name": "sys_ix",
+          "address": "Sysvar1nstructions1111111111111111111111111"
         },
         {
-          "name": "sys_ix"
+          "name": "oracle",
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "collateral_oracle",
+          "relations": [
+            "market_header"
+          ]
         },
         {
           "name": "optimizer_program",
@@ -423,7 +479,11 @@
           "name": "protocol_program"
         },
         {
-          "name": "protocol_vault"
+          "name": "protocol_vault",
+          "writable": true
+        },
+        {
+          "name": "protocol_vault_authority"
         }
       ],
       "args": [
@@ -434,7 +494,346 @@
       ]
     },
     {
-      "name": "deposit",
+      "name": "change_market_status",
+      "discriminator": [
+        221,
+        127,
+        224,
+        41,
+        177,
+        145,
+        126,
+        8
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "docs": [
+            "The authority that creates and manages the market"
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "market_header",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "update_market_status",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "dangerously_mutate_collateral",
+      "docs": [
+        "DANGEROUSLY MUTATE TRADER STATE",
+        "ONLY USE IF YOU KNOW WHAT YOU ARE DOING",
+        "VERY DANGEROUS, WILL BREAK THE CONTRACT IF USED INCORRECTLY",
+        "THIS WILL BE REMOVED SOON"
+      ],
+      "discriminator": [
+        43,
+        80,
+        201,
+        26,
+        21,
+        27,
+        236,
+        117
+      ],
+      "accounts": [
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "trader",
+          "writable": true,
+          "relations": [
+            "seat"
+          ]
+        },
+        {
+          "name": "seat",
+          "docs": [
+            "The trader's seat in the market"
+          ],
+          "writable": true
+        },
+        {
+          "name": "market_header",
+          "writable": true
+        },
+        {
+          "name": "market",
+          "docs": [
+            "The market receiving the lent assets",
+            "Verify market is active and accepting Withdraws"
+          ],
+          "writable": true,
+          "relations": [
+            "seat",
+            "market_header"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "is_increase",
+          "type": "bool"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "dangerously_mutate_on_vault_borrow",
+      "discriminator": [
+        87,
+        149,
+        67,
+        237,
+        20,
+        236,
+        117,
+        209
+      ],
+      "accounts": [
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "trader",
+          "writable": true,
+          "relations": [
+            "seat"
+          ]
+        },
+        {
+          "name": "seat",
+          "docs": [
+            "The trader's seat in the market"
+          ],
+          "writable": true
+        },
+        {
+          "name": "market_header",
+          "writable": true
+        },
+        {
+          "name": "market",
+          "docs": [
+            "The market receiving the lent assets",
+            "Verify market is active and accepting Withdraws"
+          ],
+          "writable": true,
+          "relations": [
+            "seat",
+            "market_header"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "is_increase",
+          "type": "bool"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "dangerously_mutate_on_vault_lends",
+      "discriminator": [
+        207,
+        164,
+        109,
+        18,
+        174,
+        24,
+        246,
+        69
+      ],
+      "accounts": [
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "trader",
+          "writable": true,
+          "relations": [
+            "seat"
+          ]
+        },
+        {
+          "name": "seat",
+          "docs": [
+            "The trader's seat in the market"
+          ],
+          "writable": true
+        },
+        {
+          "name": "market_header",
+          "writable": true
+        },
+        {
+          "name": "market",
+          "docs": [
+            "The market receiving the lent assets",
+            "Verify market is active and accepting Withdraws"
+          ],
+          "writable": true,
+          "relations": [
+            "seat",
+            "market_header"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "is_increase",
+          "type": "bool"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "dangerously_mutate_p2p_borrow",
+      "discriminator": [
+        43,
+        189,
+        243,
+        166,
+        66,
+        98,
+        34,
+        231
+      ],
+      "accounts": [
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "trader",
+          "writable": true,
+          "relations": [
+            "seat"
+          ]
+        },
+        {
+          "name": "seat",
+          "docs": [
+            "The trader's seat in the market"
+          ],
+          "writable": true
+        },
+        {
+          "name": "market_header",
+          "writable": true
+        },
+        {
+          "name": "market",
+          "docs": [
+            "The market receiving the lent assets",
+            "Verify market is active and accepting Withdraws"
+          ],
+          "writable": true,
+          "relations": [
+            "seat",
+            "market_header"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "is_increase",
+          "type": "bool"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "dangerously_mutate_p2p_lends",
+      "discriminator": [
+        45,
+        35,
+        162,
+        221,
+        185,
+        169,
+        197,
+        163
+      ],
+      "accounts": [
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "trader",
+          "writable": true,
+          "relations": [
+            "seat"
+          ]
+        },
+        {
+          "name": "seat",
+          "docs": [
+            "The trader's seat in the market"
+          ],
+          "writable": true
+        },
+        {
+          "name": "market_header",
+          "writable": true
+        },
+        {
+          "name": "market",
+          "docs": [
+            "The market receiving the lent assets",
+            "Verify market is active and accepting Withdraws"
+          ],
+          "writable": true,
+          "relations": [
+            "seat",
+            "market_header"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "is_increase",
+          "type": "bool"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "deposit_collateral",
       "docs": [
         "Allows a trader to deposit assets to the market.",
         "",
@@ -443,14 +842,14 @@
         "or for lending in the peer-to-peer market."
       ],
       "discriminator": [
-        242,
-        35,
-        198,
-        137,
-        82,
-        225,
-        242,
-        182
+        156,
+        131,
+        142,
+        116,
+        146,
+        247,
+        162,
+        120
       ],
       "accounts": [
         {
@@ -589,31 +988,96 @@
           }
         },
         {
-          "name": "protocol_trader_pda",
+          "name": "paystream_vault_authority",
           "pda": {
             "seeds": [
               {
                 "kind": "const",
                 "value": [
                   112,
-                  114,
-                  111,
-                  116,
-                  111,
-                  99,
-                  111,
-                  108,
-                  95,
-                  116,
-                  114,
                   97,
-                  100,
+                  121,
+                  115,
+                  116,
+                  114,
+                  101,
+                  97,
+                  109,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "optimizer_state",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  111,
+                  112,
+                  116,
+                  105,
+                  109,
+                  105,
+                  122,
                   101,
                   114,
                   95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "optimizer_program"
+            }
+          }
+        },
+        {
+          "name": "market_optimizer_state",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  95,
+                  111,
                   112,
-                  100,
-                  97
+                  116,
+                  105,
+                  109,
+                  105,
+                  122,
+                  101,
+                  114
                 ]
               },
               {
@@ -632,36 +1096,8 @@
           }
         },
         {
-          "name": "optimizer_state",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  111,
-                  112,
-                  116,
-                  105,
-                  109,
-                  105,
-                  122,
-                  101,
-                  114
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "mint"
-              },
-              {
-                "kind": "account",
-                "path": "market"
-              }
-            ]
-          }
-        },
-        {
-          "name": "sys_ix"
+          "name": "sys_ix",
+          "address": "Sysvar1nstructions1111111111111111111111111"
         },
         {
           "name": "optimizer_program",
@@ -673,7 +1109,23 @@
           "name": "protocol_program"
         },
         {
-          "name": "protocol_vault"
+          "name": "protocol_vault",
+          "writable": true
+        },
+        {
+          "name": "protocol_vault_authority"
+        },
+        {
+          "name": "oracle",
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "collateral_oracle",
+          "relations": [
+            "market_header"
+          ]
         },
         {
           "name": "seat",
@@ -699,6 +1151,272 @@
           "type": "u64"
         }
       ]
+    },
+    {
+      "name": "initialize_drift_accounts",
+      "docs": [
+        "Initializes a new drift user account.",
+        "",
+        "This function creates a new drift user account for the paystream program to manage funds with drift."
+      ],
+      "discriminator": [
+        111,
+        17,
+        1,
+        7,
+        109,
+        160,
+        225,
+        192
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true,
+          "address": "5P9goJxgRVgueT4Cix9SrnuRL8fG1hSo79m9WH4dsd55"
+        },
+        {
+          "name": "paystream_vault_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  97,
+                  121,
+                  115,
+                  116,
+                  114,
+                  101,
+                  97,
+                  109,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "drift_program",
+          "address": "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH"
+        },
+        {
+          "name": "drift_state",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  114,
+                  105,
+                  102,
+                  116,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                9,
+                84,
+                219,
+                190,
+                158,
+                201,
+                96,
+                201,
+                138,
+                122,
+                41,
+                63,
+                226,
+                19,
+                54,
+                150,
+                111,
+                225,
+                128,
+                209,
+                81,
+                174,
+                75,
+                129,
+                121,
+                86,
+                31,
+                137,
+                133,
+                74,
+                83,
+                246
+              ]
+            }
+          }
+        },
+        {
+          "name": "drift_user_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "paystream_vault_authority"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  0,
+                  0
+                ]
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                9,
+                84,
+                219,
+                190,
+                158,
+                201,
+                96,
+                201,
+                138,
+                122,
+                41,
+                63,
+                226,
+                19,
+                54,
+                150,
+                111,
+                225,
+                128,
+                209,
+                81,
+                174,
+                75,
+                129,
+                121,
+                86,
+                31,
+                137,
+                133,
+                74,
+                83,
+                246
+              ]
+            }
+          }
+        },
+        {
+          "name": "drift_user_stats_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  101,
+                  114,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "paystream_vault_authority"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                9,
+                84,
+                219,
+                190,
+                158,
+                201,
+                96,
+                201,
+                138,
+                122,
+                41,
+                63,
+                226,
+                19,
+                54,
+                150,
+                111,
+                225,
+                128,
+                209,
+                81,
+                174,
+                75,
+                129,
+                121,
+                86,
+                31,
+                137,
+                133,
+                74,
+                83,
+                246
+              ]
+            }
+          }
+        },
+        {
+          "name": "rent",
+          "address": "SysvarRent111111111111111111111111111111111"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
     },
     {
       "name": "initialize_market",
@@ -814,6 +1532,43 @@
           }
         },
         {
+          "name": "paystream_vault_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  97,
+                  121,
+                  115,
+                  116,
+                  114,
+                  101,
+                  97,
+                  109,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
           "name": "mint",
           "docs": [
             "The token mint that this market will use"
@@ -858,6 +1613,30 @@
         },
         {
           "name": "market_id",
+          "type": "u64"
+        },
+        {
+          "name": "oracle_pubkey",
+          "type": "pubkey"
+        },
+        {
+          "name": "oracle_source",
+          "type": "u8"
+        },
+        {
+          "name": "collateral_oracle_pubkey",
+          "type": "pubkey"
+        },
+        {
+          "name": "collateral_oracle_source",
+          "type": "u8"
+        },
+        {
+          "name": "ltv_ratio",
+          "type": "u64"
+        },
+        {
+          "name": "liquidation_threshold",
           "type": "u64"
         }
       ]
@@ -1034,31 +1813,96 @@
           "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
         },
         {
-          "name": "protocol_trader_pda",
+          "name": "paystream_vault_authority",
           "pda": {
             "seeds": [
               {
                 "kind": "const",
                 "value": [
                   112,
-                  114,
-                  111,
-                  116,
-                  111,
-                  99,
-                  111,
-                  108,
-                  95,
-                  116,
-                  114,
                   97,
-                  100,
+                  121,
+                  115,
+                  116,
+                  114,
+                  101,
+                  97,
+                  109,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "optimizer_state",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  111,
+                  112,
+                  116,
+                  105,
+                  109,
+                  105,
+                  122,
                   101,
                   114,
                   95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "optimizer_program"
+            }
+          }
+        },
+        {
+          "name": "market_optimizer_state",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  95,
+                  111,
                   112,
-                  100,
-                  97
+                  116,
+                  105,
+                  109,
+                  105,
+                  122,
+                  101,
+                  114
                 ]
               },
               {
@@ -1077,36 +1921,20 @@
           }
         },
         {
-          "name": "optimizer_state",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  111,
-                  112,
-                  116,
-                  105,
-                  109,
-                  105,
-                  122,
-                  101,
-                  114
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "mint"
-              },
-              {
-                "kind": "account",
-                "path": "market"
-              }
-            ]
-          }
+          "name": "sys_ix",
+          "address": "Sysvar1nstructions1111111111111111111111111"
         },
         {
-          "name": "sys_ix"
+          "name": "oracle",
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "collateral_oracle",
+          "relations": [
+            "market_header"
+          ]
         },
         {
           "name": "optimizer_program",
@@ -1118,7 +1946,11 @@
           "name": "protocol_program"
         },
         {
-          "name": "protocol_vault"
+          "name": "protocol_vault",
+          "writable": true
+        },
+        {
+          "name": "protocol_vault_authority"
         }
       ],
       "args": [
@@ -1129,52 +1961,67 @@
       ]
     },
     {
-      "name": "mark_as_collateral",
+      "name": "liquidate_by_ltv",
+      "docs": [
+        "Allows anyone to liquidate a borrower's position which is undercollateralized."
+      ],
       "discriminator": [
-        150,
-        79,
-        29,
-        32,
-        159,
-        55,
-        26,
-        178
+        195,
+        69,
+        232,
+        57,
+        171,
+        231,
+        197,
+        0
       ],
       "accounts": [
         {
-          "name": "trader",
-          "docs": [
-            "The trader lending assets"
-          ],
+          "name": "liquidator",
           "writable": true,
-          "signer": true,
-          "relations": [
-            "seat"
-          ]
+          "signer": true
+        },
+        {
+          "name": "liquidatee",
+          "writable": true
         },
         {
           "name": "market_header",
-          "docs": [
-            "The market header account that will be initialized and stores market metadata"
-          ],
           "writable": true
         },
         {
           "name": "market",
           "docs": [
             "The market receiving the lent assets",
-            "Verify market is active and accepting deposits"
+            "Verify market is active and accepting Borrows"
           ],
           "writable": true,
           "relations": [
-            "market_header",
-            "seat"
+            "market_header"
+          ]
+        },
+        {
+          "name": "collateral_market",
+          "docs": [
+            "The collateral market account"
+          ],
+          "relations": [
+            "market_header"
           ]
         },
         {
           "name": "mint",
           "docs": [
-            "The mint of the asset being deposited"
+            "The mint of the asset being Borrowed"
+          ],
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "collateral_mint",
+          "docs": [
+            "The collateral mint of the asset being Borrowed"
           ],
           "relations": [
             "market_header"
@@ -1220,13 +2067,48 @@
           ]
         },
         {
-          "name": "trader_token_account",
+          "name": "collateral_vault",
+          "docs": [
+            "The collateral market vault where assets will be stored"
+          ],
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "collateral_market"
+              },
+              {
+                "kind": "account",
+                "path": "collateral_mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "liquidator_token_account",
           "writable": true,
           "pda": {
             "seeds": [
               {
                 "kind": "account",
-                "path": "trader"
+                "path": "liquidator"
               },
               {
                 "kind": "account",
@@ -1277,31 +2159,169 @@
           }
         },
         {
-          "name": "protocol_trader_pda",
+          "name": "liquidator_collateral_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "liquidator"
+              },
+              {
+                "kind": "account",
+                "path": "collateral_token_program"
+              },
+              {
+                "kind": "account",
+                "path": "collateral_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "token_program",
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "collateral_token_program",
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "paystream_vault_authority",
           "pda": {
             "seeds": [
               {
                 "kind": "const",
                 "value": [
                   112,
-                  114,
-                  111,
-                  116,
-                  111,
-                  99,
-                  111,
-                  108,
-                  95,
-                  116,
-                  114,
                   97,
-                  100,
+                  121,
+                  115,
+                  116,
+                  114,
+                  101,
+                  97,
+                  109,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "optimizer_state",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  111,
+                  112,
+                  116,
+                  105,
+                  109,
+                  105,
+                  122,
                   101,
                   114,
                   95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "optimizer_program"
+            }
+          }
+        },
+        {
+          "name": "market_optimizer_state",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  95,
+                  111,
                   112,
-                  100,
-                  97
+                  116,
+                  105,
+                  109,
+                  105,
+                  122,
+                  101,
+                  114
                 ]
               },
               {
@@ -1320,6 +2340,354 @@
           }
         },
         {
+          "name": "sys_ix",
+          "address": "Sysvar1nstructions1111111111111111111111111"
+        },
+        {
+          "name": "oracle",
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "collateral_oracle",
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "optimizer_program",
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "protocol_program"
+        },
+        {
+          "name": "protocol_vault",
+          "writable": true
+        },
+        {
+          "name": "protocol_vault_authority"
+        }
+      ],
+      "args": [
+        {
+          "name": "asset_amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "liquidate_by_overdue",
+      "docs": [
+        "Allows anyone to liquidate a borrower's position which is overdue."
+      ],
+      "discriminator": [
+        52,
+        219,
+        140,
+        149,
+        80,
+        175,
+        53,
+        21
+      ],
+      "accounts": [
+        {
+          "name": "liquidator",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "liquidatee",
+          "writable": true
+        },
+        {
+          "name": "market_header",
+          "writable": true
+        },
+        {
+          "name": "market",
+          "docs": [
+            "The market receiving the lent assets",
+            "Verify market is active and accepting Borrows"
+          ],
+          "writable": true,
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "collateral_market",
+          "docs": [
+            "The collateral market account"
+          ],
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "mint",
+          "docs": [
+            "The mint of the asset being Borrowed"
+          ],
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "collateral_mint",
+          "docs": [
+            "The collateral mint of the asset being Borrowed"
+          ],
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "vault",
+          "docs": [
+            "The market vault where assets will be stored"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          },
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "collateral_vault",
+          "docs": [
+            "The collateral market vault where assets will be stored"
+          ],
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "collateral_market"
+              },
+              {
+                "kind": "account",
+                "path": "collateral_mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "liquidator_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "liquidator"
+              },
+              {
+                "kind": "account",
+                "path": "token_program"
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "liquidator_collateral_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "liquidator"
+              },
+              {
+                "kind": "account",
+                "path": "collateral_token_program"
+              },
+              {
+                "kind": "account",
+                "path": "collateral_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "token_program",
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "collateral_token_program",
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "paystream_vault_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  97,
+                  121,
+                  115,
+                  116,
+                  114,
+                  101,
+                  97,
+                  109,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
           "name": "optimizer_state",
           "pda": {
             "seeds": [
@@ -1334,22 +2702,77 @@
                   105,
                   122,
                   101,
+                  114,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "optimizer_program"
+            }
+          }
+        },
+        {
+          "name": "market_optimizer_state",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  95,
+                  111,
+                  112,
+                  116,
+                  105,
+                  109,
+                  105,
+                  122,
+                  101,
                   114
                 ]
               },
               {
                 "kind": "account",
-                "path": "mint"
+                "path": "market"
               },
               {
                 "kind": "account",
-                "path": "market"
+                "path": "mint"
               }
-            ]
+            ],
+            "program": {
+              "kind": "account",
+              "path": "optimizer_program"
+            }
           }
         },
         {
-          "name": "sys_ix"
+          "name": "sys_ix",
+          "address": "Sysvar1nstructions1111111111111111111111111"
+        },
+        {
+          "name": "oracle",
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "collateral_oracle",
+          "relations": [
+            "market_header"
+          ]
         },
         {
           "name": "optimizer_program",
@@ -1361,7 +2784,62 @@
           "name": "protocol_program"
         },
         {
-          "name": "protocol_vault"
+          "name": "protocol_vault",
+          "writable": true
+        },
+        {
+          "name": "protocol_vault_authority"
+        }
+      ],
+      "args": [
+        {
+          "name": "asset_amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "mark_as_collateral",
+      "discriminator": [
+        150,
+        79,
+        29,
+        32,
+        159,
+        55,
+        26,
+        178
+      ],
+      "accounts": [
+        {
+          "name": "trader",
+          "docs": [
+            "The trader lending assets"
+          ],
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "seat"
+          ]
+        },
+        {
+          "name": "market_header",
+          "docs": [
+            "The market header account that will be initialized and stores market metadata"
+          ],
+          "writable": true
+        },
+        {
+          "name": "market",
+          "docs": [
+            "The market receiving the lent assets",
+            "Verify market is active and accepting deposits"
+          ],
+          "writable": true,
+          "relations": [
+            "market_header",
+            "seat"
+          ]
         },
         {
           "name": "seat",
@@ -1369,16 +2847,6 @@
             "The trader's seat in the market"
           ],
           "writable": true
-        },
-        {
-          "name": "token_program",
-          "relations": [
-            "market_header"
-          ]
-        },
-        {
-          "name": "associated_token_program",
-          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
         }
       ],
       "args": [
@@ -1435,17 +2903,6 @@
           "relations": [
             "market_header",
             "seat"
-          ]
-        },
-        {
-          "name": "collateral_market",
-          "docs": [
-            "The collateral market receiving the lent assets",
-            "Verify market is active and accepting Repays"
-          ],
-          "writable": true,
-          "relations": [
-            "market_header"
           ]
         },
         {
@@ -1580,31 +3037,96 @@
           "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
         },
         {
-          "name": "protocol_trader_pda",
+          "name": "paystream_vault_authority",
           "pda": {
             "seeds": [
               {
                 "kind": "const",
                 "value": [
                   112,
-                  114,
-                  111,
-                  116,
-                  111,
-                  99,
-                  111,
-                  108,
-                  95,
-                  116,
-                  114,
                   97,
-                  100,
+                  121,
+                  115,
+                  116,
+                  114,
+                  101,
+                  97,
+                  109,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "optimizer_state",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  111,
+                  112,
+                  116,
+                  105,
+                  109,
+                  105,
+                  122,
                   101,
                   114,
                   95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "optimizer_program"
+            }
+          }
+        },
+        {
+          "name": "market_optimizer_state",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  95,
+                  111,
                   112,
-                  100,
-                  97
+                  116,
+                  105,
+                  109,
+                  105,
+                  122,
+                  101,
+                  114
                 ]
               },
               {
@@ -1623,36 +3145,20 @@
           }
         },
         {
-          "name": "optimizer_state",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  111,
-                  112,
-                  116,
-                  105,
-                  109,
-                  105,
-                  122,
-                  101,
-                  114
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "mint"
-              },
-              {
-                "kind": "account",
-                "path": "market"
-              }
-            ]
-          }
+          "name": "sys_ix",
+          "address": "Sysvar1nstructions1111111111111111111111111"
         },
         {
-          "name": "sys_ix"
+          "name": "oracle",
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "collateral_oracle",
+          "relations": [
+            "market_header"
+          ]
         },
         {
           "name": "optimizer_program",
@@ -1664,7 +3170,11 @@
           "name": "protocol_program"
         },
         {
-          "name": "protocol_vault"
+          "name": "protocol_vault",
+          "writable": true
+        },
+        {
+          "name": "protocol_vault_authority"
         }
       ],
       "args": [
@@ -1861,11 +3371,31 @@
           "type": "pubkey"
         },
         {
-          "name": "enable_p2p_lending",
-          "type": "bool"
+          "name": "update_market_status",
+          "type": "u64"
         },
         {
-          "name": "update_market_status",
+          "name": "oracle_pubkey",
+          "type": "pubkey"
+        },
+        {
+          "name": "oracle_source",
+          "type": "u8"
+        },
+        {
+          "name": "collateral_oracle_pubkey",
+          "type": "pubkey"
+        },
+        {
+          "name": "collateral_oracle_source",
+          "type": "u8"
+        },
+        {
+          "name": "ltv_ratio",
+          "type": "u64"
+        },
+        {
+          "name": "liquidation_threshold",
           "type": "u64"
         }
       ]
@@ -2097,31 +3627,96 @@
           "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
         },
         {
-          "name": "protocol_trader_pda",
+          "name": "paystream_vault_authority",
           "pda": {
             "seeds": [
               {
                 "kind": "const",
                 "value": [
                   112,
-                  114,
-                  111,
-                  116,
-                  111,
-                  99,
-                  111,
-                  108,
-                  95,
-                  116,
-                  114,
                   97,
-                  100,
+                  121,
+                  115,
+                  116,
+                  114,
+                  101,
+                  97,
+                  109,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "optimizer_state",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  111,
+                  112,
+                  116,
+                  105,
+                  109,
+                  105,
+                  122,
                   101,
                   114,
                   95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "optimizer_program"
+            }
+          }
+        },
+        {
+          "name": "market_optimizer_state",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  95,
+                  111,
                   112,
-                  100,
-                  97
+                  116,
+                  105,
+                  109,
+                  105,
+                  122,
+                  101,
+                  114
                 ]
               },
               {
@@ -2140,36 +3735,20 @@
           }
         },
         {
-          "name": "optimizer_state",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  111,
-                  112,
-                  116,
-                  105,
-                  109,
-                  105,
-                  122,
-                  101,
-                  114
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "mint"
-              },
-              {
-                "kind": "account",
-                "path": "market"
-              }
-            ]
-          }
+          "name": "sys_ix",
+          "address": "Sysvar1nstructions1111111111111111111111111"
         },
         {
-          "name": "sys_ix"
+          "name": "oracle",
+          "relations": [
+            "market_header"
+          ]
+        },
+        {
+          "name": "collateral_oracle",
+          "relations": [
+            "market_header"
+          ]
         },
         {
           "name": "optimizer_program",
@@ -2181,7 +3760,11 @@
           "name": "protocol_program"
         },
         {
-          "name": "protocol_vault"
+          "name": "protocol_vault",
+          "writable": true
+        },
+        {
+          "name": "protocol_vault_authority"
         }
       ],
       "args": [
@@ -2234,7 +3817,7 @@
     {
       "code": 6002,
       "name": "InsufficientFunds",
-      "msg": "Insufficient funds"
+      "msg": "Insufficient funds, Tried to withdraw more than available, or collateral is frozen due to borrowing"
     },
     {
       "code": 6003,
@@ -2395,6 +3978,41 @@
       "code": 6034,
       "name": "InvalidRepaymentAmount",
       "msg": "Invalid repayment amount"
+    },
+    {
+      "code": 6035,
+      "name": "UnableToLoadOracle",
+      "msg": "Unable to load oracle"
+    },
+    {
+      "code": 6036,
+      "name": "InvalidOracle",
+      "msg": "Invalid oracle"
+    },
+    {
+      "code": 6037,
+      "name": "InsufficientOracleDataPoints",
+      "msg": "Insufficient oracle data points"
+    },
+    {
+      "code": 6038,
+      "name": "OracleDelayTooHigh",
+      "msg": "Oracle delay too high"
+    },
+    {
+      "code": 6039,
+      "name": "LiquidationThresholdNotMet",
+      "msg": "Liquidation threshold not met"
+    },
+    {
+      "code": 6040,
+      "name": "NoDebtToLiquidate",
+      "msg": "No debt to liquidate"
+    },
+    {
+      "code": 6041,
+      "name": "MatchNotFound",
+      "msg": "Match not found"
     }
   ],
   "types": [
@@ -2435,10 +4053,6 @@
             "type": "pubkey"
           },
           {
-            "name": "p2p_enabled",
-            "type": "bool"
-          },
-          {
             "name": "status",
             "type": "u64"
           },
@@ -2467,11 +4081,35 @@
             "type": "pubkey"
           },
           {
+            "name": "oracle",
+            "type": "pubkey"
+          },
+          {
+            "name": "oracle_source",
+            "type": "u8"
+          },
+          {
+            "name": "collateral_oracle",
+            "type": "pubkey"
+          },
+          {
+            "name": "collateral_oracle_source",
+            "type": "u8"
+          },
+          {
+            "name": "ltv_ratio",
+            "type": "u64"
+          },
+          {
+            "name": "liquidation_threshold",
+            "type": "u64"
+          },
+          {
             "name": "_padding",
             "type": {
               "array": [
                 "u8",
-                64
+                48
               ]
             }
           },
@@ -2513,11 +4151,6 @@
   ],
   "constants": [
     {
-      "name": "LTV_RATIO",
-      "type": "u64",
-      "value": "8000"
-    },
-    {
       "name": "MARKET_HEADER_SEED",
       "type": "bytes",
       "value": "[109, 97, 114, 107, 101, 116, 95, 104, 101, 97, 100, 101, 114]"
@@ -2528,12 +4161,22 @@
       "value": "[109, 97, 114, 107, 101, 116, 95, 118, 97, 117, 108, 116]"
     },
     {
+      "name": "PAYSTREAM_VAULT_AUTHORITY_SEED",
+      "type": "bytes",
+      "value": "[112, 97, 121, 115, 116, 114, 101, 97, 109, 95, 118, 97, 117, 108, 116, 95, 97, 117, 116, 104, 111, 114, 105, 116, 121]"
+    },
+    {
       "name": "PRICE_PRECISION",
       "type": "u64",
-      "value": "1000000000"
+      "value": "1000000"
     },
     {
       "name": "RATE_PRECISION",
+      "type": "u64",
+      "value": "10000"
+    },
+    {
+      "name": "RATIO_PRECISION",
       "type": "u64",
       "value": "10000"
     },

@@ -1,7 +1,8 @@
 import * as beet from "@metaplex-foundation/beet";
 import * as beetSolana from "@metaplex-foundation/beet-solana";
-import { MatchState, TraderState } from "./types";
 import { PublicKey } from "@solana/web3.js";
+import { MatchState, TraderState } from "./types";
+
 export const traderStateBeet = new beet.BeetArgsStruct<TraderState>(
   [
     ["onVaultLends", beet.u64],

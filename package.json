@@ -1,9 +1,10 @@
 {
-  "name": "@paystreamfinance/sdk",
-  "version": "0.0.1",
+  "name": "@meimfhd/paystream-v1",
+  "version": "0.4.0-beta.24",
   "description": "Paystream v1 TS package",
   "main": "src/index.ts",
   "module": "src/index.ts",
+  "types": "src/index.ts",
   "files": [
     "dist"
   ],
@@ -15,7 +16,7 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "build:package": "yarn clean && rollup -c",
+    "build:package": "pnpm clean && rollup -c",
     "clean": "rm -rf ./dist",
     "prepublishOnly": "node ./scripts/preparePkgForRegistry.js && rollup -c",
     "postpublish": "node ./scripts/rollbackPkg.js",
@@ -24,21 +25,28 @@
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.31.0",
+    "@coral-xyz/anchor-v0.29": "npm:@coral-xyz/anchor@^0.29.0",
     "@coral-xyz/spl-token": "^0.31.0",
     "@drift-labs/sdk": "2.118.0-beta.3",
-    "@metaplex-foundation/beet": "^0.7.1",
+    "@metaplex-foundation/beet": "^0.7.2",
     "@metaplex-foundation/beet-solana": "^0.4.1",
-    "@rollup/plugin-json": "^6.1.0",
+    "@pythnetwork/client": "2.5.3",
+    "@pythnetwork/price-service-sdk": "1.7.1",
+    "@pythnetwork/pyth-solana-receiver": "0.7.0",
     "@solana/spl-token": "^0.4.0",
+    "@solana/web3.js": "^1.98.0",
     "bs58": "^5.0.0",
     "buffer-layout": "^1.2.2",
-    "lodash.chunk": "^4.2.0"
+    "lodash.chunk": "^4.2.0",
+    "ts-mocha": "^11.1.0"
   },
   "devDependencies": {
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-typescript": "^12.1.2",
     "@types/bs58": "^4.0.4",
     "@types/lodash.chunk": "^4.2.9",
+    "@types/node": "^22.15.2",
     "rollup": "^3.29.0",
-    "rollup-plugin-typescript2": "^0.35.0",
     "typescript": "^5.2.2"
   }
 }

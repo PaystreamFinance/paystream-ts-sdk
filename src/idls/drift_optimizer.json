@@ -1,5 +1,5 @@
 {
-  "address": "BcwrzHi4JyZ83g47onQThJweVGCTpP79rKbTUPcZss3i",
+  "address": "GMAnYXJ4AApsVDMwyHWG1rXHWGrM7uybfzQiaqpXU784",
   "metadata": {
     "name": "drift_optimizer",
     "version": "0.1.0",
@@ -9,33 +9,58 @@
   "instructions": [
     {
       "name": "deposit",
-      "discriminator": [242, 35, 198, 137, 82, 225, 242, 182],
+      "discriminator": [
+        242,
+        35,
+        198,
+        137,
+        82,
+        225,
+        242,
+        182
+      ],
       "accounts": [
         {
           "name": "accounts",
           "accounts": [
             {
-              "name": "protocol_trader_pda"
+              "name": "paystream_vault",
+              "writable": true
             },
             {
-              "name": "paystream_vault"
-            },
-            {
-              "name": "protocol_vault"
+              "name": "protocol_vault",
+              "writable": true
             },
             {
               "name": "mint"
             },
             {
-              "name": "sys_ix"
+              "name": "paystream_vault_authority",
+              "signer": true
+            },
+            {
+              "name": "protocol_vault_authority"
+            },
+            {
+              "name": "sys_ix",
+              "address": "Sysvar1nstructions1111111111111111111111111"
             },
             {
               "name": "token_program"
             },
             {
               "name": "protocol_program"
+            },
+            {
+              "name": "oracle"
+            },
+            {
+              "name": "collateral_oracle"
             }
           ]
+        },
+        {
+          "name": "market_optimizer_state"
         },
         {
           "name": "state"
@@ -50,30 +75,402 @@
     },
     {
       "name": "get_apys",
-      "discriminator": [46, 166, 111, 74, 7, 34, 8, 154],
+      "discriminator": [
+        46,
+        166,
+        111,
+        74,
+        7,
+        34,
+        8,
+        154
+      ],
       "accounts": [
         {
           "name": "state"
         },
         {
-          "name": "sys_ix"
+          "name": "market_optimizer_state"
+        }
+      ],
+      "args": [
+        {
+          "name": "mint",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "initialize_drift_state",
+      "discriminator": [
+        189,
+        151,
+        83,
+        248,
+        88,
+        184,
+        84,
+        166
+      ],
+      "accounts": [
+        {
+          "name": "caller",
+          "address": "f9Gfo7RHWxGwPZN6EVDHWydyiyQUt4NA9JaF7cSWwcU"
+        },
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true,
+          "address": "5P9goJxgRVgueT4Cix9SrnuRL8fG1hSo79m9WH4dsd55"
+        },
+        {
+          "name": "optimizer_state",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  111,
+                  112,
+                  116,
+                  105,
+                  109,
+                  105,
+                  122,
+                  101,
+                  114,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  97,
+                  121,
+                  115,
+                  116,
+                  114,
+                  101,
+                  97,
+                  109,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                9,
+                197,
+                107,
+                253,
+                126,
+                146,
+                6,
+                20,
+                214,
+                52,
+                236,
+                231,
+                160,
+                150,
+                45,
+                35,
+                186,
+                6,
+                173,
+                66,
+                95,
+                100,
+                241,
+                51,
+                197,
+                150,
+                27,
+                137,
+                172,
+                251,
+                107,
+                25
+              ]
+            }
+          }
+        },
+        {
+          "name": "drift_user_account",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "authority"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  0,
+                  0
+                ]
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                9,
+                84,
+                219,
+                190,
+                158,
+                201,
+                96,
+                201,
+                138,
+                122,
+                41,
+                63,
+                226,
+                19,
+                54,
+                150,
+                111,
+                225,
+                128,
+                209,
+                81,
+                174,
+                75,
+                129,
+                121,
+                86,
+                31,
+                137,
+                133,
+                74,
+                83,
+                246
+              ]
+            }
+          }
+        },
+        {
+          "name": "drift_user_stats_account",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  101,
+                  114,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "authority"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                9,
+                84,
+                219,
+                190,
+                158,
+                201,
+                96,
+                201,
+                138,
+                122,
+                41,
+                63,
+                226,
+                19,
+                54,
+                150,
+                111,
+                225,
+                128,
+                209,
+                81,
+                174,
+                75,
+                129,
+                121,
+                86,
+                31,
+                137,
+                133,
+                74,
+                83,
+                246
+              ]
+            }
+          }
+        },
+        {
+          "name": "drift_state",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  114,
+                  105,
+                  102,
+                  116,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                9,
+                84,
+                219,
+                190,
+                158,
+                201,
+                96,
+                201,
+                138,
+                122,
+                41,
+                63,
+                226,
+                19,
+                54,
+                150,
+                111,
+                225,
+                128,
+                209,
+                81,
+                174,
+                75,
+                129,
+                121,
+                86,
+                31,
+                137,
+                133,
+                74,
+                83,
+                246
+              ]
+            }
+          }
+        },
+        {
+          "name": "drift_program",
+          "address": "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH"
+        },
+        {
+          "name": "rent",
+          "address": "SysvarRent111111111111111111111111111111111"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
         }
       ],
       "args": []
     },
     {
-      "name": "initialize",
-      "discriminator": [175, 175, 109, 31, 13, 152, 155, 237],
+      "name": "initialize_market_optimizer",
+      "discriminator": [
+        155,
+        29,
+        135,
+        254,
+        6,
+        171,
+        222,
+        222
+      ],
       "accounts": [
-        {
-          "name": "caller",
-          "writable": true,
-          "signer": true
-        },
         {
           "name": "authority",
           "writable": true,
           "signer": true
+        },
+        {
+          "name": "state",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  111,
+                  112,
+                  116,
+                  105,
+                  109,
+                  105,
+                  122,
+                  101,
+                  114,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              }
+            ]
+          }
         },
         {
           "name": "market"
@@ -82,14 +479,29 @@
           "name": "mint"
         },
         {
-          "name": "protocol_trader_pda",
+          "name": "market_optimizer_state",
+          "writable": true,
           "pda": {
             "seeds": [
               {
                 "kind": "const",
                 "value": [
-                  112, 114, 111, 116, 111, 99, 111, 108, 95, 116, 114, 97, 100,
-                  101, 114, 95, 112, 100, 97
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  95,
+                  111,
+                  112,
+                  116,
+                  105,
+                  109,
+                  105,
+                  122,
+                  101,
+                  114
                 ]
               },
               {
@@ -104,29 +516,6 @@
           }
         },
         {
-          "name": "state",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [111, 112, 116, 105, 109, 105, 122, 101, 114]
-              },
-              {
-                "kind": "account",
-                "path": "market"
-              },
-              {
-                "kind": "account",
-                "path": "mint"
-              }
-            ]
-          }
-        },
-        {
-          "name": "protocol_program"
-        },
-        {
           "name": "system_program",
           "address": "11111111111111111111111111111111"
         }
@@ -135,33 +524,31 @@
         {
           "name": "drift_market_index",
           "type": "u16"
+        },
+        {
+          "name": "collateral_market_index",
+          "type": "u16"
         }
       ]
     },
     {
-      "name": "update_market_authority",
-      "discriminator": [117, 110, 157, 95, 174, 56, 208, 146],
-      "accounts": [
-        {
-          "name": "authority",
-          "docs": ["The authority that creates and manages the market"],
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "state",
-          "writable": true
-        }
+      "name": "update_drift_state",
+      "discriminator": [
+        93,
+        122,
+        106,
+        181,
+        18,
+        46,
+        183,
+        217
       ],
-      "args": []
-    },
-    {
-      "name": "update_state",
-      "discriminator": [135, 112, 215, 75, 247, 185, 53, 176],
       "accounts": [
         {
           "name": "authority",
-          "docs": ["The authority that creates and manages the market"],
+          "docs": [
+            "The authority that creates and manages the market"
+          ],
           "writable": true,
           "signer": true
         },
@@ -180,6 +567,83 @@
           "type": "pubkey"
         },
         {
+          "name": "drift_state",
+          "type": "pubkey"
+        },
+        {
+          "name": "drift_user_account",
+          "type": "pubkey"
+        },
+        {
+          "name": "drift_user_stats_account",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "update_market_authority",
+      "discriminator": [
+        117,
+        110,
+        157,
+        95,
+        174,
+        56,
+        208,
+        146
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "docs": [
+            "The authority that creates and manages the market"
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "state",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "new_authority",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "update_market_optimizer_state",
+      "discriminator": [
+        39,
+        250,
+        251,
+        64,
+        44,
+        50,
+        191,
+        17
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "docs": [
+            "The authority that creates and manages the market"
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "state"
+        },
+        {
+          "name": "market_optimizer_state",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
           "name": "mint",
           "type": "pubkey"
         },
@@ -190,38 +654,75 @@
         {
           "name": "market_index",
           "type": "u16"
+        },
+        {
+          "name": "collateral_market_index",
+          "type": "u16"
+        },
+        {
+          "name": "drift_spot_market_account",
+          "type": "pubkey"
+        },
+        {
+          "name": "drift_spot_collateral_market_account",
+          "type": "pubkey"
         }
       ]
     },
     {
       "name": "withdraw",
-      "discriminator": [183, 18, 70, 156, 148, 109, 161, 34],
+      "discriminator": [
+        183,
+        18,
+        70,
+        156,
+        148,
+        109,
+        161,
+        34
+      ],
       "accounts": [
         {
           "name": "accounts",
           "accounts": [
             {
-              "name": "protocol_trader_pda"
+              "name": "paystream_vault",
+              "writable": true
             },
             {
-              "name": "paystream_vault"
-            },
-            {
-              "name": "protocol_vault"
+              "name": "protocol_vault",
+              "writable": true
             },
             {
               "name": "mint"
             },
             {
-              "name": "sys_ix"
+              "name": "paystream_vault_authority",
+              "signer": true
+            },
+            {
+              "name": "protocol_vault_authority"
+            },
+            {
+              "name": "sys_ix",
+              "address": "Sysvar1nstructions1111111111111111111111111"
             },
             {
               "name": "token_program"
             },
             {
               "name": "protocol_program"
+            },
+            {
+              "name": "oracle"
+            },
+            {
+              "name": "collateral_oracle"
             }
           ]
+        },
+        {
+          "name": "market_optimizer_state"
         },
         {
           "name": "state"
@@ -237,13 +738,67 @@
   ],
   "accounts": [
     {
-      "name": "DriftOptimizer",
-      "discriminator": [198, 176, 94, 58, 239, 121, 203, 45]
+      "name": "DriftOptimizerState",
+      "discriminator": [
+        72,
+        142,
+        136,
+        99,
+        188,
+        12,
+        80,
+        86
+      ]
+    },
+    {
+      "name": "MarketOptimizerState",
+      "discriminator": [
+        236,
+        204,
+        181,
+        8,
+        147,
+        92,
+        67,
+        218
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "InvalidProgramId",
+      "msg": "Invalid program id"
+    },
+    {
+      "code": 6001,
+      "name": "InvalidAuthority",
+      "msg": "Invalid authority"
+    },
+    {
+      "code": 6002,
+      "name": "InvalidMarket",
+      "msg": "Invalid market"
+    },
+    {
+      "code": 6003,
+      "name": "InvalidMint",
+      "msg": "Invalid mint"
+    },
+    {
+      "code": 6004,
+      "name": "InvalidProtocolProgram",
+      "msg": "Invalid protocol program"
+    },
+    {
+      "code": 6005,
+      "name": "InvalidRemainingAccounts",
+      "msg": "Invalid remaining accounts"
     }
   ],
   "types": [
     {
-      "name": "DriftOptimizer",
+      "name": "DriftOptimizerState",
       "type": {
         "kind": "struct",
         "fields": [
@@ -260,6 +815,30 @@
             "type": "pubkey"
           },
           {
+            "name": "drift_state",
+            "type": "pubkey"
+          },
+          {
+            "name": "drift_user_account",
+            "type": "pubkey"
+          },
+          {
+            "name": "drift_user_stats_account",
+            "type": "pubkey"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MarketOptimizerState",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
             "name": "mint",
             "type": "pubkey"
           },
@@ -268,12 +847,24 @@
             "type": "pubkey"
           },
           {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
             "name": "market_index",
             "type": "u16"
           },
           {
-            "name": "bump",
-            "type": "u8"
+            "name": "collateral_market_index",
+            "type": "u16"
+          },
+          {
+            "name": "drift_spot_market_account",
+            "type": "pubkey"
+          },
+          {
+            "name": "drift_spot_collateral_market_account",
+            "type": "pubkey"
           }
         ]
       }

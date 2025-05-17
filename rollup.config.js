@@ -1,6 +1,7 @@
-const typescript = require("rollup-plugin-typescript2");
-const pkg = require("./package.json");
 const json = require("@rollup/plugin-json");
+const typescript = require("@rollup/plugin-typescript");
+const pkg = require("./package.json");
+
 module.exports = {
   input: "src/index.ts",
   output: [
@@ -16,11 +17,10 @@ module.exports = {
   external: [
     ...Object.keys(pkg.dependencies || {}),
     ...Object.keys(pkg.peerDependencies || {}),
+    ...Object.keys(pkg.devDependencies || {}),
   ],
   plugins: [
-    typescript({
-      typescript: require("typescript"),
-    }),
     json(),
+    typescript(),
   ],
 };

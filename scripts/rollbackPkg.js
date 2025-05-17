@@ -6,4 +6,8 @@ const pkg = require("../package.json");
 console.log("undoing package.json from build");
 pkg.main = "src/index.ts";
 pkg.module = "src/index.ts";
-fs.writeFileSync(`${__dirname}/../package.json`, JSON.stringify(pkg, null, 2));
+pkg.types = "src/index.ts";
+fs.writeFileSync(
+  `${__dirname}/../package.json`,
+  JSON.stringify(pkg, null, 2) + "\n"
+);

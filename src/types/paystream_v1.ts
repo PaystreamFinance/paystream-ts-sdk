@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/paystream_v1.json`.
  */
 export type PaystreamV1 = {
-  "address": "BEs6Lh6NbDVtxt3FPKVkLN9fz22Byk6EvEp4GRUW7mqm",
+  "address": "f9Gfo7RHWxGwPZN6EVDHWydyiyQUt4NA9JaF7cSWwcU",
   "metadata": {
     "name": "paystreamV1",
     "version": "0.1.0",
@@ -149,6 +149,13 @@ export type PaystreamV1 = {
         },
         {
           "name": "marketHeader",
+          "writable": true
+        },
+        {
+          "name": "collateralMarketHeader",
+          "docs": [
+            "The collateral market header account"
+          ],
           "writable": true
         },
         {
@@ -345,31 +352,96 @@ export type PaystreamV1 = {
           "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
         },
         {
-          "name": "protocolTraderPda",
+          "name": "paystreamVaultAuthority",
           "pda": {
             "seeds": [
               {
                 "kind": "const",
                 "value": [
                   112,
-                  114,
-                  111,
-                  116,
-                  111,
-                  99,
-                  111,
-                  108,
-                  95,
-                  116,
-                  114,
                   97,
-                  100,
+                  121,
+                  115,
+                  116,
+                  114,
+                  101,
+                  97,
+                  109,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "optimizerState",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  111,
+                  112,
+                  116,
+                  105,
+                  109,
+                  105,
+                  122,
                   101,
                   114,
                   95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "optimizerProgram"
+            }
+          }
+        },
+        {
+          "name": "marketOptimizerState",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  95,
+                  111,
                   112,
-                  100,
-                  97
+                  116,
+                  105,
+                  109,
+                  105,
+                  122,
+                  101,
+                  114
                 ]
               },
               {
@@ -388,36 +460,20 @@ export type PaystreamV1 = {
           }
         },
         {
-          "name": "optimizerState",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  111,
-                  112,
-                  116,
-                  105,
-                  109,
-                  105,
-                  122,
-                  101,
-                  114
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "mint"
-              },
-              {
-                "kind": "account",
-                "path": "market"
-              }
-            ]
-          }
+          "name": "sysIx",
+          "address": "Sysvar1nstructions1111111111111111111111111"
         },
         {
-          "name": "sysIx"
+          "name": "oracle",
+          "relations": [
+            "marketHeader"
+          ]
+        },
+        {
+          "name": "collateralOracle",
+          "relations": [
+            "marketHeader"
+          ]
         },
         {
           "name": "optimizerProgram",
@@ -429,7 +485,11 @@ export type PaystreamV1 = {
           "name": "protocolProgram"
         },
         {
-          "name": "protocolVault"
+          "name": "protocolVault",
+          "writable": true
+        },
+        {
+          "name": "protocolVaultAuthority"
         }
       ],
       "args": [
@@ -440,7 +500,346 @@ export type PaystreamV1 = {
       ]
     },
     {
-      "name": "deposit",
+      "name": "changeMarketStatus",
+      "discriminator": [
+        221,
+        127,
+        224,
+        41,
+        177,
+        145,
+        126,
+        8
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "docs": [
+            "The authority that creates and manages the market"
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "marketHeader",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "updateMarketStatus",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "dangerouslyMutateCollateral",
+      "docs": [
+        "DANGEROUSLY MUTATE TRADER STATE",
+        "ONLY USE IF YOU KNOW WHAT YOU ARE DOING",
+        "VERY DANGEROUS, WILL BREAK THE CONTRACT IF USED INCORRECTLY",
+        "THIS WILL BE REMOVED SOON"
+      ],
+      "discriminator": [
+        43,
+        80,
+        201,
+        26,
+        21,
+        27,
+        236,
+        117
+      ],
+      "accounts": [
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "trader",
+          "writable": true,
+          "relations": [
+            "seat"
+          ]
+        },
+        {
+          "name": "seat",
+          "docs": [
+            "The trader's seat in the market"
+          ],
+          "writable": true
+        },
+        {
+          "name": "marketHeader",
+          "writable": true
+        },
+        {
+          "name": "market",
+          "docs": [
+            "The market receiving the lent assets",
+            "Verify market is active and accepting Withdraws"
+          ],
+          "writable": true,
+          "relations": [
+            "seat",
+            "marketHeader"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "isIncrease",
+          "type": "bool"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "dangerouslyMutateOnVaultBorrow",
+      "discriminator": [
+        87,
+        149,
+        67,
+        237,
+        20,
+        236,
+        117,
+        209
+      ],
+      "accounts": [
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "trader",
+          "writable": true,
+          "relations": [
+            "seat"
+          ]
+        },
+        {
+          "name": "seat",
+          "docs": [
+            "The trader's seat in the market"
+          ],
+          "writable": true
+        },
+        {
+          "name": "marketHeader",
+          "writable": true
+        },
+        {
+          "name": "market",
+          "docs": [
+            "The market receiving the lent assets",
+            "Verify market is active and accepting Withdraws"
+          ],
+          "writable": true,
+          "relations": [
+            "seat",
+            "marketHeader"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "isIncrease",
+          "type": "bool"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "dangerouslyMutateOnVaultLends",
+      "discriminator": [
+        207,
+        164,
+        109,
+        18,
+        174,
+        24,
+        246,
+        69
+      ],
+      "accounts": [
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "trader",
+          "writable": true,
+          "relations": [
+            "seat"
+          ]
+        },
+        {
+          "name": "seat",
+          "docs": [
+            "The trader's seat in the market"
+          ],
+          "writable": true
+        },
+        {
+          "name": "marketHeader",
+          "writable": true
+        },
+        {
+          "name": "market",
+          "docs": [
+            "The market receiving the lent assets",
+            "Verify market is active and accepting Withdraws"
+          ],
+          "writable": true,
+          "relations": [
+            "seat",
+            "marketHeader"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "isIncrease",
+          "type": "bool"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "dangerouslyMutateP2pBorrow",
+      "discriminator": [
+        43,
+        189,
+        243,
+        166,
+        66,
+        98,
+        34,
+        231
+      ],
+      "accounts": [
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "trader",
+          "writable": true,
+          "relations": [
+            "seat"
+          ]
+        },
+        {
+          "name": "seat",
+          "docs": [
+            "The trader's seat in the market"
+          ],
+          "writable": true
+        },
+        {
+          "name": "marketHeader",
+          "writable": true
+        },
+        {
+          "name": "market",
+          "docs": [
+            "The market receiving the lent assets",
+            "Verify market is active and accepting Withdraws"
+          ],
+          "writable": true,
+          "relations": [
+            "seat",
+            "marketHeader"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "isIncrease",
+          "type": "bool"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "dangerouslyMutateP2pLends",
+      "discriminator": [
+        45,
+        35,
+        162,
+        221,
+        185,
+        169,
+        197,
+        163
+      ],
+      "accounts": [
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "trader",
+          "writable": true,
+          "relations": [
+            "seat"
+          ]
+        },
+        {
+          "name": "seat",
+          "docs": [
+            "The trader's seat in the market"
+          ],
+          "writable": true
+        },
+        {
+          "name": "marketHeader",
+          "writable": true
+        },
+        {
+          "name": "market",
+          "docs": [
+            "The market receiving the lent assets",
+            "Verify market is active and accepting Withdraws"
+          ],
+          "writable": true,
+          "relations": [
+            "seat",
+            "marketHeader"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "isIncrease",
+          "type": "bool"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "depositCollateral",
       "docs": [
         "Allows a trader to deposit assets to the market.",
         "",
@@ -449,14 +848,14 @@ export type PaystreamV1 = {
         "or for lending in the peer-to-peer market."
       ],
       "discriminator": [
-        242,
-        35,
-        198,
-        137,
-        82,
-        225,
-        242,
-        182
+        156,
+        131,
+        142,
+        116,
+        146,
+        247,
+        162,
+        120
       ],
       "accounts": [
         {
@@ -595,31 +994,96 @@ export type PaystreamV1 = {
           }
         },
         {
-          "name": "protocolTraderPda",
+          "name": "paystreamVaultAuthority",
           "pda": {
             "seeds": [
               {
                 "kind": "const",
                 "value": [
                   112,
-                  114,
-                  111,
-                  116,
-                  111,
-                  99,
-                  111,
-                  108,
-                  95,
-                  116,
-                  114,
                   97,
-                  100,
+                  121,
+                  115,
+                  116,
+                  114,
+                  101,
+                  97,
+                  109,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "optimizerState",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  111,
+                  112,
+                  116,
+                  105,
+                  109,
+                  105,
+                  122,
                   101,
                   114,
                   95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "optimizerProgram"
+            }
+          }
+        },
+        {
+          "name": "marketOptimizerState",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  95,
+                  111,
                   112,
-                  100,
-                  97
+                  116,
+                  105,
+                  109,
+                  105,
+                  122,
+                  101,
+                  114
                 ]
               },
               {
@@ -638,36 +1102,8 @@ export type PaystreamV1 = {
           }
         },
         {
-          "name": "optimizerState",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  111,
-                  112,
-                  116,
-                  105,
-                  109,
-                  105,
-                  122,
-                  101,
-                  114
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "mint"
-              },
-              {
-                "kind": "account",
-                "path": "market"
-              }
-            ]
-          }
-        },
-        {
-          "name": "sysIx"
+          "name": "sysIx",
+          "address": "Sysvar1nstructions1111111111111111111111111"
         },
         {
           "name": "optimizerProgram",
@@ -679,7 +1115,23 @@ export type PaystreamV1 = {
           "name": "protocolProgram"
         },
         {
-          "name": "protocolVault"
+          "name": "protocolVault",
+          "writable": true
+        },
+        {
+          "name": "protocolVaultAuthority"
+        },
+        {
+          "name": "oracle",
+          "relations": [
+            "marketHeader"
+          ]
+        },
+        {
+          "name": "collateralOracle",
+          "relations": [
+            "marketHeader"
+          ]
         },
         {
           "name": "seat",
@@ -705,6 +1157,272 @@ export type PaystreamV1 = {
           "type": "u64"
         }
       ]
+    },
+    {
+      "name": "initializeDriftAccounts",
+      "docs": [
+        "Initializes a new drift user account.",
+        "",
+        "This function creates a new drift user account for the paystream program to manage funds with drift."
+      ],
+      "discriminator": [
+        111,
+        17,
+        1,
+        7,
+        109,
+        160,
+        225,
+        192
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true,
+          "address": "5P9goJxgRVgueT4Cix9SrnuRL8fG1hSo79m9WH4dsd55"
+        },
+        {
+          "name": "paystreamVaultAuthority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  97,
+                  121,
+                  115,
+                  116,
+                  114,
+                  101,
+                  97,
+                  109,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "driftProgram",
+          "address": "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH"
+        },
+        {
+          "name": "driftState",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  114,
+                  105,
+                  102,
+                  116,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                9,
+                84,
+                219,
+                190,
+                158,
+                201,
+                96,
+                201,
+                138,
+                122,
+                41,
+                63,
+                226,
+                19,
+                54,
+                150,
+                111,
+                225,
+                128,
+                209,
+                81,
+                174,
+                75,
+                129,
+                121,
+                86,
+                31,
+                137,
+                133,
+                74,
+                83,
+                246
+              ]
+            }
+          }
+        },
+        {
+          "name": "driftUserAccount",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "paystreamVaultAuthority"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  0,
+                  0
+                ]
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                9,
+                84,
+                219,
+                190,
+                158,
+                201,
+                96,
+                201,
+                138,
+                122,
+                41,
+                63,
+                226,
+                19,
+                54,
+                150,
+                111,
+                225,
+                128,
+                209,
+                81,
+                174,
+                75,
+                129,
+                121,
+                86,
+                31,
+                137,
+                133,
+                74,
+                83,
+                246
+              ]
+            }
+          }
+        },
+        {
+          "name": "driftUserStatsAccount",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  101,
+                  114,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "paystreamVaultAuthority"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                9,
+                84,
+                219,
+                190,
+                158,
+                201,
+                96,
+                201,
+                138,
+                122,
+                41,
+                63,
+                226,
+                19,
+                54,
+                150,
+                111,
+                225,
+                128,
+                209,
+                81,
+                174,
+                75,
+                129,
+                121,
+                86,
+                31,
+                137,
+                133,
+                74,
+                83,
+                246
+              ]
+            }
+          }
+        },
+        {
+          "name": "rent",
+          "address": "SysvarRent111111111111111111111111111111111"
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
     },
     {
       "name": "initializeMarket",
@@ -820,6 +1538,43 @@ export type PaystreamV1 = {
           }
         },
         {
+          "name": "paystreamVaultAuthority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  97,
+                  121,
+                  115,
+                  116,
+                  114,
+                  101,
+                  97,
+                  109,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
           "name": "mint",
           "docs": [
             "The token mint that this market will use"
@@ -864,6 +1619,30 @@ export type PaystreamV1 = {
         },
         {
           "name": "marketId",
+          "type": "u64"
+        },
+        {
+          "name": "oraclePubkey",
+          "type": "pubkey"
+        },
+        {
+          "name": "oracleSource",
+          "type": "u8"
+        },
+        {
+          "name": "collateralOraclePubkey",
+          "type": "pubkey"
+        },
+        {
+          "name": "collateralOracleSource",
+          "type": "u8"
+        },
+        {
+          "name": "ltvRatio",
+          "type": "u64"
+        },
+        {
+          "name": "liquidationThreshold",
           "type": "u64"
         }
       ]
@@ -1040,31 +1819,96 @@ export type PaystreamV1 = {
           "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
         },
         {
-          "name": "protocolTraderPda",
+          "name": "paystreamVaultAuthority",
           "pda": {
             "seeds": [
               {
                 "kind": "const",
                 "value": [
                   112,
-                  114,
-                  111,
-                  116,
-                  111,
-                  99,
-                  111,
-                  108,
-                  95,
-                  116,
-                  114,
                   97,
-                  100,
+                  121,
+                  115,
+                  116,
+                  114,
+                  101,
+                  97,
+                  109,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "optimizerState",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  111,
+                  112,
+                  116,
+                  105,
+                  109,
+                  105,
+                  122,
                   101,
                   114,
                   95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "optimizerProgram"
+            }
+          }
+        },
+        {
+          "name": "marketOptimizerState",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  95,
+                  111,
                   112,
-                  100,
-                  97
+                  116,
+                  105,
+                  109,
+                  105,
+                  122,
+                  101,
+                  114
                 ]
               },
               {
@@ -1083,36 +1927,20 @@ export type PaystreamV1 = {
           }
         },
         {
-          "name": "optimizerState",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  111,
-                  112,
-                  116,
-                  105,
-                  109,
-                  105,
-                  122,
-                  101,
-                  114
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "mint"
-              },
-              {
-                "kind": "account",
-                "path": "market"
-              }
-            ]
-          }
+          "name": "sysIx",
+          "address": "Sysvar1nstructions1111111111111111111111111"
         },
         {
-          "name": "sysIx"
+          "name": "oracle",
+          "relations": [
+            "marketHeader"
+          ]
+        },
+        {
+          "name": "collateralOracle",
+          "relations": [
+            "marketHeader"
+          ]
         },
         {
           "name": "optimizerProgram",
@@ -1124,7 +1952,11 @@ export type PaystreamV1 = {
           "name": "protocolProgram"
         },
         {
-          "name": "protocolVault"
+          "name": "protocolVault",
+          "writable": true
+        },
+        {
+          "name": "protocolVaultAuthority"
         }
       ],
       "args": [
@@ -1135,52 +1967,67 @@ export type PaystreamV1 = {
       ]
     },
     {
-      "name": "markAsCollateral",
+      "name": "liquidateByLtv",
+      "docs": [
+        "Allows anyone to liquidate a borrower's position which is undercollateralized."
+      ],
       "discriminator": [
-        150,
-        79,
-        29,
-        32,
-        159,
-        55,
-        26,
-        178
+        195,
+        69,
+        232,
+        57,
+        171,
+        231,
+        197,
+        0
       ],
       "accounts": [
         {
-          "name": "trader",
-          "docs": [
-            "The trader lending assets"
-          ],
+          "name": "liquidator",
           "writable": true,
-          "signer": true,
-          "relations": [
-            "seat"
-          ]
+          "signer": true
+        },
+        {
+          "name": "liquidatee",
+          "writable": true
         },
         {
           "name": "marketHeader",
-          "docs": [
-            "The market header account that will be initialized and stores market metadata"
-          ],
           "writable": true
         },
         {
           "name": "market",
           "docs": [
             "The market receiving the lent assets",
-            "Verify market is active and accepting deposits"
+            "Verify market is active and accepting Borrows"
           ],
           "writable": true,
           "relations": [
-            "marketHeader",
-            "seat"
+            "marketHeader"
+          ]
+        },
+        {
+          "name": "collateralMarket",
+          "docs": [
+            "The collateral market account"
+          ],
+          "relations": [
+            "marketHeader"
           ]
         },
         {
           "name": "mint",
           "docs": [
-            "The mint of the asset being deposited"
+            "The mint of the asset being Borrowed"
+          ],
+          "relations": [
+            "marketHeader"
+          ]
+        },
+        {
+          "name": "collateralMint",
+          "docs": [
+            "The collateral mint of the asset being Borrowed"
           ],
           "relations": [
             "marketHeader"
@@ -1226,13 +2073,48 @@ export type PaystreamV1 = {
           ]
         },
         {
-          "name": "traderTokenAccount",
+          "name": "collateralVault",
+          "docs": [
+            "The collateral market vault where assets will be stored"
+          ],
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "collateralMarket"
+              },
+              {
+                "kind": "account",
+                "path": "collateralMint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "liquidatorTokenAccount",
           "writable": true,
           "pda": {
             "seeds": [
               {
                 "kind": "account",
-                "path": "trader"
+                "path": "liquidator"
               },
               {
                 "kind": "account",
@@ -1283,31 +2165,169 @@ export type PaystreamV1 = {
           }
         },
         {
-          "name": "protocolTraderPda",
+          "name": "liquidatorCollateralTokenAccount",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "liquidator"
+              },
+              {
+                "kind": "account",
+                "path": "collateralTokenProgram"
+              },
+              {
+                "kind": "account",
+                "path": "collateralMint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "tokenProgram",
+          "relations": [
+            "marketHeader"
+          ]
+        },
+        {
+          "name": "collateralTokenProgram",
+          "relations": [
+            "marketHeader"
+          ]
+        },
+        {
+          "name": "associatedTokenProgram",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "paystreamVaultAuthority",
           "pda": {
             "seeds": [
               {
                 "kind": "const",
                 "value": [
                   112,
-                  114,
-                  111,
-                  116,
-                  111,
-                  99,
-                  111,
-                  108,
-                  95,
-                  116,
-                  114,
                   97,
-                  100,
+                  121,
+                  115,
+                  116,
+                  114,
+                  101,
+                  97,
+                  109,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "optimizerState",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  111,
+                  112,
+                  116,
+                  105,
+                  109,
+                  105,
+                  122,
                   101,
                   114,
                   95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "optimizerProgram"
+            }
+          }
+        },
+        {
+          "name": "marketOptimizerState",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  95,
+                  111,
                   112,
-                  100,
-                  97
+                  116,
+                  105,
+                  109,
+                  105,
+                  122,
+                  101,
+                  114
                 ]
               },
               {
@@ -1326,6 +2346,354 @@ export type PaystreamV1 = {
           }
         },
         {
+          "name": "sysIx",
+          "address": "Sysvar1nstructions1111111111111111111111111"
+        },
+        {
+          "name": "oracle",
+          "relations": [
+            "marketHeader"
+          ]
+        },
+        {
+          "name": "collateralOracle",
+          "relations": [
+            "marketHeader"
+          ]
+        },
+        {
+          "name": "optimizerProgram",
+          "relations": [
+            "marketHeader"
+          ]
+        },
+        {
+          "name": "protocolProgram"
+        },
+        {
+          "name": "protocolVault",
+          "writable": true
+        },
+        {
+          "name": "protocolVaultAuthority"
+        }
+      ],
+      "args": [
+        {
+          "name": "assetAmount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "liquidateByOverdue",
+      "docs": [
+        "Allows anyone to liquidate a borrower's position which is overdue."
+      ],
+      "discriminator": [
+        52,
+        219,
+        140,
+        149,
+        80,
+        175,
+        53,
+        21
+      ],
+      "accounts": [
+        {
+          "name": "liquidator",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "liquidatee",
+          "writable": true
+        },
+        {
+          "name": "marketHeader",
+          "writable": true
+        },
+        {
+          "name": "market",
+          "docs": [
+            "The market receiving the lent assets",
+            "Verify market is active and accepting Borrows"
+          ],
+          "writable": true,
+          "relations": [
+            "marketHeader"
+          ]
+        },
+        {
+          "name": "collateralMarket",
+          "docs": [
+            "The collateral market account"
+          ],
+          "relations": [
+            "marketHeader"
+          ]
+        },
+        {
+          "name": "mint",
+          "docs": [
+            "The mint of the asset being Borrowed"
+          ],
+          "relations": [
+            "marketHeader"
+          ]
+        },
+        {
+          "name": "collateralMint",
+          "docs": [
+            "The collateral mint of the asset being Borrowed"
+          ],
+          "relations": [
+            "marketHeader"
+          ]
+        },
+        {
+          "name": "vault",
+          "docs": [
+            "The market vault where assets will be stored"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          },
+          "relations": [
+            "marketHeader"
+          ]
+        },
+        {
+          "name": "collateralVault",
+          "docs": [
+            "The collateral market vault where assets will be stored"
+          ],
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "collateralMarket"
+              },
+              {
+                "kind": "account",
+                "path": "collateralMint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "liquidatorTokenAccount",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "liquidator"
+              },
+              {
+                "kind": "account",
+                "path": "tokenProgram"
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "liquidatorCollateralTokenAccount",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "liquidator"
+              },
+              {
+                "kind": "account",
+                "path": "collateralTokenProgram"
+              },
+              {
+                "kind": "account",
+                "path": "collateralMint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "tokenProgram",
+          "relations": [
+            "marketHeader"
+          ]
+        },
+        {
+          "name": "collateralTokenProgram",
+          "relations": [
+            "marketHeader"
+          ]
+        },
+        {
+          "name": "associatedTokenProgram",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "paystreamVaultAuthority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  97,
+                  121,
+                  115,
+                  116,
+                  114,
+                  101,
+                  97,
+                  109,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
           "name": "optimizerState",
           "pda": {
             "seeds": [
@@ -1340,22 +2708,77 @@ export type PaystreamV1 = {
                   105,
                   122,
                   101,
+                  114,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "optimizerProgram"
+            }
+          }
+        },
+        {
+          "name": "marketOptimizerState",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  95,
+                  111,
+                  112,
+                  116,
+                  105,
+                  109,
+                  105,
+                  122,
+                  101,
                   114
                 ]
               },
               {
                 "kind": "account",
-                "path": "mint"
+                "path": "market"
               },
               {
                 "kind": "account",
-                "path": "market"
+                "path": "mint"
               }
-            ]
+            ],
+            "program": {
+              "kind": "account",
+              "path": "optimizerProgram"
+            }
           }
         },
         {
-          "name": "sysIx"
+          "name": "sysIx",
+          "address": "Sysvar1nstructions1111111111111111111111111"
+        },
+        {
+          "name": "oracle",
+          "relations": [
+            "marketHeader"
+          ]
+        },
+        {
+          "name": "collateralOracle",
+          "relations": [
+            "marketHeader"
+          ]
         },
         {
           "name": "optimizerProgram",
@@ -1367,7 +2790,62 @@ export type PaystreamV1 = {
           "name": "protocolProgram"
         },
         {
-          "name": "protocolVault"
+          "name": "protocolVault",
+          "writable": true
+        },
+        {
+          "name": "protocolVaultAuthority"
+        }
+      ],
+      "args": [
+        {
+          "name": "assetAmount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "markAsCollateral",
+      "discriminator": [
+        150,
+        79,
+        29,
+        32,
+        159,
+        55,
+        26,
+        178
+      ],
+      "accounts": [
+        {
+          "name": "trader",
+          "docs": [
+            "The trader lending assets"
+          ],
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "seat"
+          ]
+        },
+        {
+          "name": "marketHeader",
+          "docs": [
+            "The market header account that will be initialized and stores market metadata"
+          ],
+          "writable": true
+        },
+        {
+          "name": "market",
+          "docs": [
+            "The market receiving the lent assets",
+            "Verify market is active and accepting deposits"
+          ],
+          "writable": true,
+          "relations": [
+            "marketHeader",
+            "seat"
+          ]
         },
         {
           "name": "seat",
@@ -1375,16 +2853,6 @@ export type PaystreamV1 = {
             "The trader's seat in the market"
           ],
           "writable": true
-        },
-        {
-          "name": "tokenProgram",
-          "relations": [
-            "marketHeader"
-          ]
-        },
-        {
-          "name": "associatedTokenProgram",
-          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
         }
       ],
       "args": [
@@ -1441,17 +2909,6 @@ export type PaystreamV1 = {
           "relations": [
             "marketHeader",
             "seat"
-          ]
-        },
-        {
-          "name": "collateralMarket",
-          "docs": [
-            "The collateral market receiving the lent assets",
-            "Verify market is active and accepting Repays"
-          ],
-          "writable": true,
-          "relations": [
-            "marketHeader"
           ]
         },
         {
@@ -1586,31 +3043,96 @@ export type PaystreamV1 = {
           "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
         },
         {
-          "name": "protocolTraderPda",
+          "name": "paystreamVaultAuthority",
           "pda": {
             "seeds": [
               {
                 "kind": "const",
                 "value": [
                   112,
-                  114,
-                  111,
-                  116,
-                  111,
-                  99,
-                  111,
-                  108,
-                  95,
-                  116,
-                  114,
                   97,
-                  100,
+                  121,
+                  115,
+                  116,
+                  114,
+                  101,
+                  97,
+                  109,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "optimizerState",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  111,
+                  112,
+                  116,
+                  105,
+                  109,
+                  105,
+                  122,
                   101,
                   114,
                   95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "optimizerProgram"
+            }
+          }
+        },
+        {
+          "name": "marketOptimizerState",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  95,
+                  111,
                   112,
-                  100,
-                  97
+                  116,
+                  105,
+                  109,
+                  105,
+                  122,
+                  101,
+                  114
                 ]
               },
               {
@@ -1629,36 +3151,20 @@ export type PaystreamV1 = {
           }
         },
         {
-          "name": "optimizerState",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  111,
-                  112,
-                  116,
-                  105,
-                  109,
-                  105,
-                  122,
-                  101,
-                  114
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "mint"
-              },
-              {
-                "kind": "account",
-                "path": "market"
-              }
-            ]
-          }
+          "name": "sysIx",
+          "address": "Sysvar1nstructions1111111111111111111111111"
         },
         {
-          "name": "sysIx"
+          "name": "oracle",
+          "relations": [
+            "marketHeader"
+          ]
+        },
+        {
+          "name": "collateralOracle",
+          "relations": [
+            "marketHeader"
+          ]
         },
         {
           "name": "optimizerProgram",
@@ -1670,7 +3176,11 @@ export type PaystreamV1 = {
           "name": "protocolProgram"
         },
         {
-          "name": "protocolVault"
+          "name": "protocolVault",
+          "writable": true
+        },
+        {
+          "name": "protocolVaultAuthority"
         }
       ],
       "args": [
@@ -1867,11 +3377,31 @@ export type PaystreamV1 = {
           "type": "pubkey"
         },
         {
-          "name": "enableP2pLending",
-          "type": "bool"
+          "name": "updateMarketStatus",
+          "type": "u64"
         },
         {
-          "name": "updateMarketStatus",
+          "name": "oraclePubkey",
+          "type": "pubkey"
+        },
+        {
+          "name": "oracleSource",
+          "type": "u8"
+        },
+        {
+          "name": "collateralOraclePubkey",
+          "type": "pubkey"
+        },
+        {
+          "name": "collateralOracleSource",
+          "type": "u8"
+        },
+        {
+          "name": "ltvRatio",
+          "type": "u64"
+        },
+        {
+          "name": "liquidationThreshold",
           "type": "u64"
         }
       ]
@@ -2103,31 +3633,96 @@ export type PaystreamV1 = {
           "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
         },
         {
-          "name": "protocolTraderPda",
+          "name": "paystreamVaultAuthority",
           "pda": {
             "seeds": [
               {
                 "kind": "const",
                 "value": [
                   112,
-                  114,
-                  111,
-                  116,
-                  111,
-                  99,
-                  111,
-                  108,
-                  95,
-                  116,
-                  114,
                   97,
-                  100,
+                  121,
+                  115,
+                  116,
+                  114,
+                  101,
+                  97,
+                  109,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "optimizerState",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  111,
+                  112,
+                  116,
+                  105,
+                  109,
+                  105,
+                  122,
                   101,
                   114,
                   95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              }
+            ],
+            "program": {
+              "kind": "account",
+              "path": "optimizerProgram"
+            }
+          }
+        },
+        {
+          "name": "marketOptimizerState",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116,
+                  95,
+                  111,
                   112,
-                  100,
-                  97
+                  116,
+                  105,
+                  109,
+                  105,
+                  122,
+                  101,
+                  114
                 ]
               },
               {
@@ -2146,36 +3741,20 @@ export type PaystreamV1 = {
           }
         },
         {
-          "name": "optimizerState",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  111,
-                  112,
-                  116,
-                  105,
-                  109,
-                  105,
-                  122,
-                  101,
-                  114
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "mint"
-              },
-              {
-                "kind": "account",
-                "path": "market"
-              }
-            ]
-          }
+          "name": "sysIx",
+          "address": "Sysvar1nstructions1111111111111111111111111"
         },
         {
-          "name": "sysIx"
+          "name": "oracle",
+          "relations": [
+            "marketHeader"
+          ]
+        },
+        {
+          "name": "collateralOracle",
+          "relations": [
+            "marketHeader"
+          ]
         },
         {
           "name": "optimizerProgram",
@@ -2187,7 +3766,11 @@ export type PaystreamV1 = {
           "name": "protocolProgram"
         },
         {
-          "name": "protocolVault"
+          "name": "protocolVault",
+          "writable": true
+        },
+        {
+          "name": "protocolVaultAuthority"
         }
       ],
       "args": [
@@ -2240,7 +3823,7 @@ export type PaystreamV1 = {
     {
       "code": 6002,
       "name": "insufficientFunds",
-      "msg": "Insufficient funds"
+      "msg": "Insufficient funds, Tried to withdraw more than available, or collateral is frozen due to borrowing"
     },
     {
       "code": 6003,
@@ -2401,6 +3984,41 @@ export type PaystreamV1 = {
       "code": 6034,
       "name": "invalidRepaymentAmount",
       "msg": "Invalid repayment amount"
+    },
+    {
+      "code": 6035,
+      "name": "unableToLoadOracle",
+      "msg": "Unable to load oracle"
+    },
+    {
+      "code": 6036,
+      "name": "invalidOracle",
+      "msg": "Invalid oracle"
+    },
+    {
+      "code": 6037,
+      "name": "insufficientOracleDataPoints",
+      "msg": "Insufficient oracle data points"
+    },
+    {
+      "code": 6038,
+      "name": "oracleDelayTooHigh",
+      "msg": "Oracle delay too high"
+    },
+    {
+      "code": 6039,
+      "name": "liquidationThresholdNotMet",
+      "msg": "Liquidation threshold not met"
+    },
+    {
+      "code": 6040,
+      "name": "noDebtToLiquidate",
+      "msg": "No debt to liquidate"
+    },
+    {
+      "code": 6041,
+      "name": "matchNotFound",
+      "msg": "Match not found"
     }
   ],
   "types": [
@@ -2441,10 +4059,6 @@ export type PaystreamV1 = {
             "type": "pubkey"
           },
           {
-            "name": "p2pEnabled",
-            "type": "bool"
-          },
-          {
             "name": "status",
             "type": "u64"
           },
@@ -2473,11 +4087,35 @@ export type PaystreamV1 = {
             "type": "pubkey"
           },
           {
+            "name": "oracle",
+            "type": "pubkey"
+          },
+          {
+            "name": "oracleSource",
+            "type": "u8"
+          },
+          {
+            "name": "collateralOracle",
+            "type": "pubkey"
+          },
+          {
+            "name": "collateralOracleSource",
+            "type": "u8"
+          },
+          {
+            "name": "ltvRatio",
+            "type": "u64"
+          },
+          {
+            "name": "liquidationThreshold",
+            "type": "u64"
+          },
+          {
             "name": "padding",
             "type": {
               "array": [
                 "u8",
-                64
+                48
               ]
             }
           },
@@ -2519,11 +4157,6 @@ export type PaystreamV1 = {
   ],
   "constants": [
     {
-      "name": "ltvRatio",
-      "type": "u64",
-      "value": "8000"
-    },
-    {
       "name": "marketHeaderSeed",
       "type": "bytes",
       "value": "[109, 97, 114, 107, 101, 116, 95, 104, 101, 97, 100, 101, 114]"
@@ -2534,12 +4167,22 @@ export type PaystreamV1 = {
       "value": "[109, 97, 114, 107, 101, 116, 95, 118, 97, 117, 108, 116]"
     },
     {
+      "name": "paystreamVaultAuthoritySeed",
+      "type": "bytes",
+      "value": "[112, 97, 121, 115, 116, 114, 101, 97, 109, 95, 118, 97, 117, 108, 116, 95, 97, 117, 116, 104, 111, 114, 105, 116, 121]"
+    },
+    {
       "name": "pricePrecision",
       "type": "u64",
-      "value": "1000000000"
+      "value": "1000000"
     },
     {
       "name": "ratePrecision",
+      "type": "u64",
+      "value": "10000"
+    },
+    {
+      "name": "ratioPrecision",
       "type": "u64",
       "value": "10000"
     },

@@ -1,8 +1,6 @@
 {
     "compilerOptions": {
       "declaration": true,
-      "declarationDir": "dist",
-      "declarationMap": true,
       "module": "ESNext",
       "noImplicitAny": true,
       "esModuleInterop": true,
@@ -11,7 +9,8 @@
       "resolveJsonModule": true,
       "skipLibCheck": true,
       "strictNullChecks": true,
-      "sourceMap": true,
+      "sourceMap": false,
+      "rootDir": "src",
       "outDir": "dist",
       "baseUrl": ".",
       "paths": {
