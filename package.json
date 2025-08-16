@@ -1,6 +1,6 @@
 {
   "name": "@meimfhd/paystream-v1",
-  "version": "0.4.0-beta.24",
+  "version": "0.4.1",
   "description": "Paystream v1 TS package",
   "main": "src/index.ts",
   "module": "src/index.ts",
