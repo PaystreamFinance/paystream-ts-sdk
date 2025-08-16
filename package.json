@@ -27,7 +27,7 @@
     "@coral-xyz/anchor": "^0.31.0",
     "@coral-xyz/anchor-v0.29": "npm:@coral-xyz/anchor@^0.29.0",
     "@coral-xyz/spl-token": "^0.31.0",
-    "@drift-labs/sdk": "2.118.0-beta.3",
+    "@drift-labs/sdk": "^2.134.0",
     "@metaplex-foundation/beet": "^0.7.2",
     "@metaplex-foundation/beet-solana": "^0.4.1",
     "@pythnetwork/client": "2.5.3",
