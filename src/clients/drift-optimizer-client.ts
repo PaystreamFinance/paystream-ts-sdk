@@ -110,9 +110,9 @@ export class DriftOptimizerProgram {
       collateralMint,
       mint,
       tokenProgram:
-        market?.tokenProgram == 0 ? TOKEN_PROGRAM_ID : TOKEN_2022_PROGRAM_ID,
+        market?.tokenProgramFlag == 0 ? TOKEN_PROGRAM_ID : TOKEN_2022_PROGRAM_ID,
       collateralTokenProgram:
-        collateralMarket?.tokenProgram == 0
+        collateralMarket?.tokenProgramFlag == 0
           ? TOKEN_PROGRAM_ID
           : TOKEN_2022_PROGRAM_ID,
       optimizerProgram: this.program.programId,

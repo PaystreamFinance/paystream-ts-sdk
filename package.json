@@ -2,9 +2,9 @@
   "name": "@meimfhd/paystream-v1",
   "version": "0.4.1",
   "description": "Paystream v1 TS package",
-  "main": "src/index.ts",
-  "module": "src/index.ts",
-  "types": "src/index.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
